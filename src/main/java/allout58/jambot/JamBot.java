@@ -1,5 +1,7 @@
 package allout58.jambot;
 
+import allout58.jambot.api.API;
+import allout58.jambot.commands.CommandHelp;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -19,6 +21,9 @@ public class JamBot
     {
         parseOptions(args);
         logTest();
+
+
+        registerDefaultResponders();
     }
 
     private void parseOptions(String args[])
@@ -50,6 +55,11 @@ public class JamBot
         log.debug("Debug all the bots");
         log.trace("Trace dat code up!");
 
+    }
+
+    private void registerDefaultResponders()
+    {
+        API.registerResponder(new CommandHelp());
     }
 
 }

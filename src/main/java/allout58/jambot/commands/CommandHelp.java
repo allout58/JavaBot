@@ -7,7 +7,7 @@ import allout58.jambot.api.*;
  */
 public class CommandHelp implements ICommand
 {
-    private static final String format="%20s - %s"
+    private static final String format="%20s - %s";
 
     @Override
     public void processCommand(IClient sender, String[] args)

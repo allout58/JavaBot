@@ -23,4 +23,6 @@ public interface IServer
     void connect();
 
     void authenticate(String user, String password, Object... other);
+
+    void disconnect();
 }
