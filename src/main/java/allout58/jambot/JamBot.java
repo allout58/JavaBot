@@ -1,7 +1,10 @@
 package allout58.jambot;
 
 import allout58.jambot.api.API;
-import allout58.jambot.commands.CommandHelp;
+import allout58.jambot.api.IServer;
+import allout58.jambot.builtin.commands.CommandHelp;
+import allout58.jambot.builtin.servers.cmd.CmdServer;
+import allout58.jambot.config.Config;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -9,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by James Hollowell on 8/16/2014.
@@ -21,9 +26,13 @@ public class JamBot
     {
         parseOptions(args);
         logTest();
-
+        Config.init();
 
         registerDefaultResponders();
+
+        IServer server = new CmdServer();
+        server.connect();
+        server.authenticate("", "");
     }
 
     private void parseOptions(String args[])
@@ -33,17 +42,26 @@ public class JamBot
         parser.accepts("help").forHelp();
         parser.accepts("h").forHelp();
         parser.accepts("?").forHelp();
-        final OptionSpec<String> opt1 = parser.accepts("option1", "The first option. MUAHAHAHAHA").withOptionalArg();
-        final OptionSpec<File> homeOption = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
+        final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
+        final OptionSpec<Boolean> flagDebug = parser.acceptsAll(Arrays.asList("debug", "d")).withRequiredArg().ofType(Boolean.TYPE).defaultsTo(false);
 
         final OptionSet options = parser.parse(args);
 
-        File homeLoc = options.valueOf(homeOption);
-        String test1 = options.valueOf(opt1);
+        if (options.has("help") || options.has("h") || options.has("?"))
+        {
+            try
+            {
+                parser.printHelpOn(System.out);
+                return;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
 
-        log.error("Opt1: " + test1);
-        log.error("HomeLoc: " + homeLoc.getAbsolutePath());
-
+        Config.homeDir = options.valueOf(optionHome);
+        Config.debugMode = options.valueOf(flagDebug);
     }
 
     private void logTest()

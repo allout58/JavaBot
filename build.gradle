@@ -2,6 +2,21 @@ apply plugin: 'java'
 //apply plugin: 'checkstyle'
 //apply plugin: 'findbugs'
 apply plugin: 'idea'
+apply plugin: 'launch4j'
+
+buildscript{
+    repositories {
+        mavenCentral()
+    }
+    dependencies{
+        classpath 'edu.sc.seis.gradle:launch4j:1.0.6'
+    }
+}
+
+launch4j{
+    mainClassName="allout58.jambot.Start"
+    cmdLine=true
+}
 
 sourceCompatibility = 1.5
 version = '1.0'

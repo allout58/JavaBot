@@ -12,17 +12,12 @@ public interface IServer
 
     boolean canNotice();
 
-    boolean hasChannels();
-
-    // I/O
-    void sendMessage(String message, IChannel channel);
-
-    void onMessageReceived(String message, IClient sender);
-
     //
     void connect();
 
     void authenticate(String user, String password, Object... other);
 
     void disconnect();
+
+    IChannel[] getChannels();
 }

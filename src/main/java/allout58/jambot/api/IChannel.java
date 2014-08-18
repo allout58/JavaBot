@@ -14,4 +14,12 @@ public interface IChannel
     IClient[] getAllClients();
 
     IServer getServer();
+
+    void setServer(IServer server);
+
+    void sendMessage(String message);
+
+    void activate();
+
+    void deactivate();
 }
