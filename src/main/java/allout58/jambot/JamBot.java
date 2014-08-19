@@ -2,8 +2,10 @@ package allout58.jambot;
 
 import allout58.jambot.api.API;
 import allout58.jambot.api.IServer;
+import allout58.jambot.builtin.commands.CommandDie;
 import allout58.jambot.builtin.commands.CommandHelp;
-import allout58.jambot.builtin.servers.cmd.CmdServer;
+import allout58.jambot.builtin.commands.CommandRestart;
+import allout58.jambot.builtin.servers.irc.IRCServer;
 import allout58.jambot.config.Config;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -22,20 +24,23 @@ public class JamBot
 {
     public static final Logger log = LogManager.getLogger("JamBot");
 
-    public void init(String args[])
+    public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames" };
+
+    public static IServer daServer;
+
+    public void init(String[] args)
     {
         parseOptions(args);
-        logTest();
+        //logTest();
         Config.init();
 
         registerDefaultResponders();
 
-        IServer server = new CmdServer();
-        server.connect();
-        server.authenticate("", "");
+        daServer = new IRCServer("irc.esper.net:5555");
+        daServer.connect();
     }
 
-    private void parseOptions(String args[])
+    private void parseOptions(String[] args)
     {
         final OptionParser parser = new OptionParser();
 
@@ -43,7 +48,8 @@ public class JamBot
         parser.accepts("h").forHelp();
         parser.accepts("?").forHelp();
         final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
-        final OptionSpec<Boolean> flagDebug = parser.acceptsAll(Arrays.asList("debug", "d")).withRequiredArg().ofType(Boolean.TYPE).defaultsTo(false);
+        final OptionSpec<Boolean> flagDebug = parser.acceptsAll(Arrays.asList("debug", "d"), "Turn debug code on. (Could spam console)").withRequiredArg().ofType(Boolean.TYPE).defaultsTo(false);
+        final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withRequiredArg().defaultsTo("JamBot");
 
         final OptionSet options = parser.parse(args);
 
@@ -62,6 +68,7 @@ public class JamBot
 
         Config.homeDir = options.valueOf(optionHome);
         Config.debugMode = options.valueOf(flagDebug);
+        Config.botNick = options.valueOf(optionNick);
     }
 
     private void logTest()
@@ -78,6 +85,8 @@ public class JamBot
     private void registerDefaultResponders()
     {
         API.registerResponder(new CommandHelp());
+        API.registerResponder(new CommandRestart());
+        API.registerResponder(new CommandDie());
     }
 
 }

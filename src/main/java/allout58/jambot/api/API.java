@@ -10,7 +10,8 @@ public class API
 {
     public static final List<IResponder> responders = new LinkedList<IResponder>();
 
-    /**Registers a responder with the API manager
+    /**
+     * Registers a responder with the API manager
      *
      * @param responder The IResponder to register
      */

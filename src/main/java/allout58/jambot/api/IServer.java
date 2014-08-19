@@ -20,4 +20,6 @@ public interface IServer
     void disconnect();
 
     IChannel[] getChannels();
+
+    IChannel joinChannel(String name);
 }

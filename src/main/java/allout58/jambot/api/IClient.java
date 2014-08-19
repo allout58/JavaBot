@@ -6,7 +6,9 @@ package allout58.jambot.api;
 public interface IClient
 {
     boolean canRecievePM();
+
     boolean isOp();
+
     boolean isVoice();
 
     void sendPM(String message);

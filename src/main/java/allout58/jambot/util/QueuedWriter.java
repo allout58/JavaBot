@@ -1,5 +1,9 @@
 package allout58.jambot.util;
 
+import allout58.jambot.config.Config;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -11,10 +15,13 @@ public class QueuedWriter implements Runnable
 {
     private static final String CARRIAGE_RETURN = "\r\n";
     private final LinkedList<String> queue = new LinkedList<String>();
-    private final Thread daThread;
+    private final String name;
+    private Thread daThread;
 
     private boolean isRunning = false;
     private BufferedWriter writer;
+
+    private Logger log = LogManager.getLogger();
 
     public QueuedWriter()
     {
@@ -23,11 +30,7 @@ public class QueuedWriter implements Runnable
 
     public QueuedWriter(String name)
     {
-        daThread = new Thread(this);
-        if (!name.trim().equals(""))
-        {
-            daThread.setName(name);
-        }
+        this.name = name;
     }
 
     public void setWriter(BufferedWriter writer)
@@ -39,18 +42,31 @@ public class QueuedWriter implements Runnable
     {
         assert !isRunning;
         assert writer != null;
+        daThread = new Thread(this);
+        if (!"".equals(name.trim()))
+        {
+            daThread.setName(name);
+        }
         isRunning = true;
         daThread.start();
     }
 
     public void stop()
     {
-        isRunning = false;
+        try
+        {
+            isRunning = false;
+            daThread.join(1000);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void addToQueue(String message)
     {
-        assert writer!=null; //why add to queue if not already started...
+        assert writer != null; //why add to queue if not already started...
         synchronized (queue)
         {
             queue.addLast(message);
@@ -68,7 +84,12 @@ public class QueuedWriter implements Runnable
                 {
                     while (!queue.isEmpty())
                     {
-                        writer.write(queue.removeFirst());
+                        String msg = queue.removeFirst();
+                        writer.write(msg);
+                        if (Config.debugMode)
+                        {
+                            log.info("Output msg: " + msg);
+                        }
                         writer.write(CARRIAGE_RETURN);
                     }
                     writer.flush();

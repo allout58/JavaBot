@@ -10,11 +10,12 @@ import java.io.File;
 public class Config
 {
     public static EnumCommandPrefix commandPrefix;
-    public static boolean debugMode=false;
+    public static boolean debugMode = false;
     public static File homeDir;
+    public static String botNick;
 
     public static void init()
     {
-        commandPrefix=EnumCommandPrefix.BANG;
+        commandPrefix = EnumCommandPrefix.TILDE;
     }
 }

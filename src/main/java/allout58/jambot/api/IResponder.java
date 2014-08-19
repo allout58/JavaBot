@@ -6,5 +6,6 @@ package allout58.jambot.api;
 public interface IResponder
 {
     String getName();
+
     String getDescription();
 }

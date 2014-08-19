@@ -14,7 +14,7 @@ public enum EnumCommandPrefix
 
     private EnumCommandPrefix(String prefix)
     {
-        this.pre=prefix;
+        this.pre = prefix;
     }
 
     public String getPrefix()

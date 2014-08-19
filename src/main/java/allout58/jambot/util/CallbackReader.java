@@ -1,6 +1,5 @@
 package allout58.jambot.util;
 
-import allout58.jambot.config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +13,7 @@ import java.util.List;
  */
 public class CallbackReader implements Runnable
 {
-    public static interface IReaderCallback
+    public interface IReaderCallback
     {
         /**
          * Callback for @link{allout58.jambot.util.CallbackReader}
@@ -25,8 +24,9 @@ public class CallbackReader implements Runnable
     }
 
     private static final String CARRIAGE_RETURN = "\r\n";
-    private final Thread daThread;
+    private Thread daThread;
     private final Logger log;
+    private final String name;
 
     private boolean isRunning = false;
     private BufferedReader reader;
@@ -40,12 +40,8 @@ public class CallbackReader implements Runnable
 
     public CallbackReader(String name)
     {
-        daThread = new Thread(this);
-        if (!name.trim().equals(""))
-        {
-            daThread.setName(name);
-        }
-        log = LogManager.getLogger(name.trim().equals("") ? null : name);
+        this.name = name;
+        log = LogManager.getLogger("".equals(name.trim()) ? null : name);
     }
 
     public void setReader(BufferedReader reader)
@@ -55,7 +51,10 @@ public class CallbackReader implements Runnable
 
     public void registerCallBack(IReaderCallback callback)
     {
-        callbacks.add(callback);
+        synchronized (callbacks)
+        {
+            callbacks.add(callback);
+        }
     }
 
     public void start()
@@ -63,12 +62,26 @@ public class CallbackReader implements Runnable
         assert !isRunning;
         assert reader != null;
         isRunning = true;
+        daThread = new Thread(this);
+        if (!"".equals(name.trim()))
+        {
+            daThread.setName(name);
+        }
         daThread.start();
     }
 
     public void stop()
     {
-        isRunning = false;
+        try
+        {
+            isRunning = false;
+            daThread.join(100);
+            callbacks.clear();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -81,13 +94,16 @@ public class CallbackReader implements Runnable
             {
                 if (callbacks.size() < 1)
                     log.warn("No callback objects defined; messages being received and not processed");
-                if (Config.debugMode)
+                //                if (Config.debugMode)
+                //                {
+                //                    log.info("New message: " + line);
+                //                }
+                synchronized (callbacks)
                 {
-                    log.info("New message: " + line);
-                }
-                for (IReaderCallback callback : callbacks)
-                {
-                    callback.readerCallback(line);
+                    for (IReaderCallback callback : callbacks)
+                    {
+                        callback.readerCallback(line);
+                    }
                 }
             }
         }

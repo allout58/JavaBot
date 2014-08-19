@@ -1,6 +1,10 @@
 package allout58.jambot.builtin.commands;
 
-import allout58.jambot.api.*;
+import allout58.jambot.api.API;
+import allout58.jambot.api.IChannel;
+import allout58.jambot.api.IClient;
+import allout58.jambot.api.ICommand;
+import allout58.jambot.api.IResponder;
 
 /**
  * Created by James Hollowell on 8/16/2014.
