@@ -78,4 +78,10 @@ public class CmdClient implements IClient
         return "CmdClient";
     }
 
+    @Override
+    public void setNick(String newNick)
+    {
+
+    }
+
 }

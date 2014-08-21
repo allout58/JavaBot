@@ -72,6 +72,11 @@ public class IRCChannel implements IChannel
         clients.add(client);
     }
 
+    public void removeClient(IRCClient client)
+    {
+        clients.remove(client);
+    }
+
     @Override
     public IServer getServer()
     {

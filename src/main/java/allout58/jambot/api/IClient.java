@@ -17,6 +17,8 @@ public interface IClient
 
     void setVoice(boolean voice, IChannel channel);
 
+    void setNick(String newNick);
+
     boolean isOp(IChannel channel);
 
     boolean isVoice(IChannel channel);

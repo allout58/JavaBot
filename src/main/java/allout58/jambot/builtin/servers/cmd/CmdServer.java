@@ -108,9 +108,15 @@ public class CmdServer implements IServer, CallbackReader.IReaderCallback
         }
     }
 
+    @Override
     public IChannel joinChannel(String channel)
     {
         return fakeChannel;
+    }
+
+    @Override
+    public void partChannel(String channel)
+    {
     }
 
     @Override

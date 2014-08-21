@@ -25,5 +25,7 @@ public interface IServer
 
     IChannel joinChannel(String name);
 
+    void partChannel(String name);
+
     void sendToAllChannels(String message);
 }

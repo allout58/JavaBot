@@ -63,6 +63,12 @@ public class IRCClient implements IClient
     }
 
     @Override
+    public void setNick(String newNick)
+    {
+        this.name = newNick;
+    }
+
+    @Override
     public String getName()
     {
         return name;

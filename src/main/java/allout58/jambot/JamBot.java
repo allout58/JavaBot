@@ -4,7 +4,9 @@ import allout58.jambot.api.API;
 import allout58.jambot.api.IServer;
 import allout58.jambot.builtin.commands.CommandDie;
 import allout58.jambot.builtin.commands.CommandHelp;
+import allout58.jambot.builtin.commands.CommandJoin;
 import allout58.jambot.builtin.commands.CommandListChan;
+import allout58.jambot.builtin.commands.CommandPart;
 import allout58.jambot.builtin.commands.CommandRestart;
 import allout58.jambot.builtin.commands.ResponderGG;
 import allout58.jambot.builtin.servers.irc.IRCServer;
@@ -26,7 +28,7 @@ public class JamBot
 {
     public static final Logger log = LogManager.getLogger("JamBot");
 
-    public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames", "#FlowStoneEnergy" };
+    public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames" };
 
     public static IServer daServer;
 
@@ -90,6 +92,9 @@ public class JamBot
         API.registerResponder(new CommandRestart());
         API.registerResponder(new CommandDie());
         API.registerResponder(new CommandListChan());
+        API.registerResponder(new CommandJoin());
+        API.registerResponder(new CommandPart());
+
         API.registerResponder(new ResponderGG());
     }
 

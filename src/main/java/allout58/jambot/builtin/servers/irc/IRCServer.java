@@ -170,7 +170,19 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         channel.setWriter(this.writer);
         channel.activate();
         channel.sendMessage("Hi there!");
+        channels.put(name.toLowerCase(), channel);
         return channel;
+    }
+
+    @Override
+    public void partChannel(String name)
+    {
+        IRCChannel chan = getChannel(name);
+        if (chan != null)
+        {
+            chan.deactivate();
+            channels.remove(name.toLowerCase());
+        }
     }
 
     @Override
@@ -210,7 +222,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 isConnected = true;
                 for (String name : JamBot.channels)
                 {
-                    channels.put(name.toLowerCase(), (IRCChannel) joinChannel(name));
+                    joinChannel(name);
                 }
                 return true;
             default:
@@ -233,6 +245,40 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 getOrCreateClient(msg.getSender()).sendPM("You talk only to meh? You got somtin to hide??");
             }
         }
+        else if ("NICK".equals(command))
+        {
+            IRCClient c = getOrCreateClient(msg.getSender());
+            renameClient(c, msg.getArgs()[0].substring(1));
+        }
+        else if ("JOIN".equals(command))
+        {
+            IRCClient c = getOrCreateClient(msg.getSender());
+            if ("The_JavaBot".equals(c.getName()))
+                return;
+            IRCChannel chan = getChannel(msg.getArgs()[0]);
+            c.addChannel(chan);
+            chan.addClient(c);
+        }
+        else if ("PART".equals(command))
+        {
+            IRCClient c = getOrCreateClient(msg.getSender());
+            IRCChannel chan = getChannel(msg.getArgs()[0]);
+            c.removeChannel(chan);
+            chan.removeClient(c);
+        }
+        else if ("MODE".equals(command))
+        {
+            if (msg.getArgs().length == 3)
+            {
+                IRCClient client = getOrCreateClient(msg.getArgs()[2]);
+                IRCChannel chan = getChannel(msg.getArgs()[0]);
+                boolean adding = msg.getArgs()[1].startsWith("+");
+                boolean opMode = msg.getArgs()[1].contains("o");
+                boolean voiceMode = msg.getArgs()[1].contains("v");
+                client.setOp(adding && opMode, chan);
+                client.setVoice(adding && voiceMode, chan);
+            }
+        }
     }
 
     private IRCClient getOrCreateClient(String name)
@@ -246,5 +292,12 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             clients.put(name, c);
         }
         return c;
+    }
+
+    private void renameClient(IRCClient client, String newName)
+    {
+        clients.remove(client.getName());
+        client.setNick(newName);
+        clients.put(newName, client);
     }
 }
