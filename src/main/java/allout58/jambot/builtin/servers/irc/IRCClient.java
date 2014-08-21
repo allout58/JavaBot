@@ -143,9 +143,9 @@ public class IRCClient implements IClient
 
     public String[] splitID(String name)
     {
-        name = stripName(name); //remove first @ or +
+        String nname = stripName(name); //remove first @ or +
         String[] out = new String[3];
-        out[0] = name.contains("@") ? name : name.substring(0, name.indexOf("@"));
+        out[0] = nname.contains("@") ? nname : nname.substring(0, nname.indexOf("@"));
         return out;
     }
 }

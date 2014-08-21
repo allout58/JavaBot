@@ -53,7 +53,7 @@ public class JamBot
         parser.accepts("?").forHelp();
         final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
         final OptionSpec<Boolean> flagDebug = parser.acceptsAll(Arrays.asList("debug", "d"), "Turn debug code on. (Could spam console)").withRequiredArg().ofType(Boolean.TYPE).defaultsTo(false);
-        final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withRequiredArg().defaultsTo("JamBot");
+        final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withRequiredArg().defaultsTo("JavaBot");
 
         final OptionSet options = parser.parse(args);
 

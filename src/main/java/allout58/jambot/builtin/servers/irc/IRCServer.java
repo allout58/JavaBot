@@ -3,6 +3,7 @@ package allout58.jambot.builtin.servers.irc;
 import allout58.jambot.JamBot;
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IServer;
+import allout58.jambot.config.Config;
 import allout58.jambot.util.CallbackReader;
 import allout58.jambot.util.CommandParser;
 import allout58.jambot.util.InetHelper;
@@ -75,7 +76,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             Socket daSocket = new Socket(host, port);
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(daSocket.getOutputStream()));
             bufferedReader = new BufferedReader(new InputStreamReader(daSocket.getInputStream()));
-            authenticate("The_JavaBot", "");
+            authenticate(Config.botNick, "");
 
             writer.setWriter(bufferedWriter);
             writer.start();
@@ -253,7 +254,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         else if ("JOIN".equals(command))
         {
             IRCClient c = getOrCreateClient(msg.getSender());
-            if ("The_JavaBot".equals(c.getName()))
+            if (Config.botNick.equals(c.getName()))
                 return;
             IRCChannel chan = getChannel(msg.getArgs()[0]);
             c.addChannel(chan);
@@ -283,13 +284,14 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
 
     private IRCClient getOrCreateClient(String name)
     {
+        String n = name;
         if (name.contains("!"))
-            name = name.substring(0, name.indexOf("!"));
-        IRCClient c = clients.get(name);
+            n = name.substring(0, name.indexOf("!"));
+        IRCClient c = clients.get(n);
         if (c == null)
         {
-            c = new IRCClient(name);
-            clients.put(name, c);
+            c = new IRCClient(n);
+            clients.put(n, c);
         }
         return c;
     }
