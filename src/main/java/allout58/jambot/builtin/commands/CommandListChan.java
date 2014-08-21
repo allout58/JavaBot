@@ -5,6 +5,7 @@ import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,26 +14,30 @@ import java.util.List;
 public class CommandListChan implements ICommand
 {
     @Override
-    public void processCommand(IClient sender, String[] args)
+    public void processCommand(IClient sender, IChannel chan, String[] args)
     {
         List<String> m = new ArrayList<String>();
 
         m.add("Channels this bot is connected to:");
         for (IChannel c : sender.getServer().getChannels())
         {
-            m.add(c.getName());
+            m.add("  " + c.getName());
         }
 
         for (String arg : args)
         {
             IChannel c = sender.getServer().getChannel(arg);
             if (c == null) continue;
+            IClient[] norm = c.getAllClients();
+            List<IClient> nl = Arrays.asList(norm);
+            ArrayList<IClient> nList = new ArrayList<IClient>(nl);
             if (c.getOps().length > 0)
             {
                 m.add("Ops:");
                 for (IClient client : c.getOps())
                 {
                     m.add(" @" + client.getName());
+                    nList.remove(client);
                 }
             }
             if (c.getVoice().length > 0)
@@ -41,6 +46,15 @@ public class CommandListChan implements ICommand
                 for (IClient client : c.getVoice())
                 {
                     m.add(" +" + client.getName());
+                    nList.remove(client);
+                }
+            }
+            if (nList.size() > 0)
+            {
+                m.add("Normal: ");
+                for (IClient client : nList)
+                {
+                    m.add(" " + client.getName());
                 }
             }
         }

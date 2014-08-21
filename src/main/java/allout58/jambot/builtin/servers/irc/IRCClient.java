@@ -83,12 +83,14 @@ public class IRCClient implements IClient
     @Override
     public boolean isOp(IChannel channel)
     {
+        if (channel == null) return false;
         return opChannels.get(channel);
     }
 
     @Override
     public boolean isVoice(IChannel channel)
     {
+        if (channel == null) return false;
         return voiceChannels.get(channel);
     }
 

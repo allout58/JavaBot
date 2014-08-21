@@ -1,6 +1,7 @@
 package allout58.jambot.builtin.commands;
 
 import allout58.jambot.JamBot;
+import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
 
@@ -10,17 +11,17 @@ import allout58.jambot.api.ICommand;
 public class CommandDie implements ICommand
 {
     @Override
-    public void processCommand(IClient sender, String[] args)
+    public void processCommand(IClient sender, IChannel chan, String[] args)
     {
-//        if (sender.isOp())
-//        {
+        if (sender.isOp(chan))
+        {
             JamBot.daServer.sendToAllChannels("Ay, ay, a scratch, a scratch; marry, 'tis enough.");
             JamBot.daServer.disconnect();
-//        }
-//        else
-//        {
-//            sender.sendPM("YOU CAN'T DO DAT!!!!");
-//        }
+        }
+        else
+        {
+            sender.sendPM("YOU CAN'T DO DAT!!!!");
+        }
     }
 
     @Override

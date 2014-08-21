@@ -98,7 +98,7 @@ public class CmdServer implements IServer, CallbackReader.IReaderCallback
     public void readerCallback(String message)
     {
         writer.addToQueue("Message received: " + message);
-        if (!CommandParser.tryCommand(CmdServer.fakeClient, message))
+        if (!CommandParser.tryCommand(CmdServer.fakeClient, fakeChannel, message))
         {
             log.info("Regular message: " + message);
         }

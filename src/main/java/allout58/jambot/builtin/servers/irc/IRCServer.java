@@ -132,7 +132,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
     @Override
     public IRCChannel getChannel(String name)
     {
-        return channels.get(name);
+        return channels.get(name.toLowerCase());
     }
 
     @Override
@@ -144,10 +144,11 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             return;
         }
         IRCMessage msg = new IRCMessage(message);
+        IChannel c = getChannel(msg.getArgs()[0]);
         tryStringCommand(msg);
         if (!tryNumericCommand(msg))
         {
-            if (!CommandParser.tryCommand(getOrCreateClient(msg.getSender()), msg.getMessage().substring(msg.getMessage().indexOf(":") + 1)))
+            if (!CommandParser.tryCommand(getOrCreateClient(msg.getSender()), c, msg.getMessage().substring(msg.getMessage().indexOf(":") + 1)))
             {
                 log.info("IRC Regular message: " + message);
             }
@@ -202,13 +203,14 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                     c.addChannel(chan);
                     c.setOp(IRCClient.nameIsOp(args[i]), chan);
                     c.setVoice(IRCClient.nameIsVoice(args[i]), chan);
+                    chan.addClient(c);
                 }
                 return true;
             case 376:
                 isConnected = true;
                 for (String name : JamBot.channels)
                 {
-                    channels.put(name, (IRCChannel) joinChannel(name));
+                    channels.put(name.toLowerCase(), (IRCChannel) joinChannel(name));
                 }
                 return true;
             default:

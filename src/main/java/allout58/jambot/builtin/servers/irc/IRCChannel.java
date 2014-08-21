@@ -55,7 +55,7 @@ public class IRCChannel implements IChannel
     @Override
     public IClient[] getAllClients()
     {
-        return (IClient[]) clients.toArray();
+        return clients.toArray(new IClient[clients.size()]);
     }
 
     public IClient getClient(String name)
@@ -65,6 +65,11 @@ public class IRCChannel implements IChannel
             if (c.getName().equals(name)) return c;
         }
         return null;
+    }
+
+    public void addClient(IRCClient client)
+    {
+        clients.add(client);
     }
 
     @Override

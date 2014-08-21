@@ -5,5 +5,5 @@ package allout58.jambot.api;
  */
 public interface ICommand extends IResponder
 {
-    void processCommand(IClient sender, String[] args);
+    void processCommand(IClient sender, IChannel channel, String[] args);
 }

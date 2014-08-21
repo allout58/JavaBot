@@ -13,7 +13,7 @@ public interface IChannel
 
     IClient[] getVoice();
 
-    Object[] getAllClients();
+    IClient[] getAllClients();
 
     IServer getServer();
 

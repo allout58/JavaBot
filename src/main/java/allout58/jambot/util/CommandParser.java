@@ -13,7 +13,7 @@ import allout58.jambot.config.Config;
  */
 public class CommandParser
 {
-    public static boolean tryCommand(IClient sender, String message)
+    public static boolean tryCommand(IClient sender, IChannel chan, String message)
     {
         if (message.startsWith(Config.commandPrefix.getPrefix()))
         {
@@ -26,7 +26,7 @@ public class CommandParser
                 if (r.getName().equals(cmdName))
                 {
                     String woComName = message.substring(Config.commandPrefix.getPrefix().length() + cmdName.length());
-                    ((ICommand) r).processCommand(sender, woComName.split(" "));
+                    ((ICommand) r).processCommand(sender, chan, woComName.split(" "));
                     return true;
                 }
             }

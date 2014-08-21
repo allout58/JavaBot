@@ -1,6 +1,7 @@
 package allout58.jambot.builtin.commands;
 
 import allout58.jambot.api.API;
+import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
 import allout58.jambot.api.IMatcher;
@@ -20,7 +21,7 @@ public class CommandHelp implements ICommand
     private List<IMatcher> matchers = new ArrayList<IMatcher>();
 
     @Override
-    public void processCommand(IClient sender, String[] args)
+    public void processCommand(IClient sender, IChannel chan, String[] args)
     {
         List<String> message = new ArrayList<String>();
         if (commands.size() == 0 && matchers.size() == 0)

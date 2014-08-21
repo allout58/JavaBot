@@ -11,18 +11,25 @@ import allout58.jambot.api.ICommand;
 public class CommandRestart implements ICommand
 {
     @Override
-    public void processCommand(IClient sender, String[] args)
+    public void processCommand(IClient sender, IChannel channel, String[] args)
     {
-        try
+        if (sender.isOp(channel))
         {
-            JamBot.daServer.sendToAllChannels("Rebooting... Goodbye!");
-            JamBot.daServer.disconnect();
-            Thread.sleep(10000);
-            JamBot.daServer.connect();
+            try
+            {
+                JamBot.daServer.sendToAllChannels("Rebooting... Goodbye!");
+                JamBot.daServer.disconnect();
+                Thread.sleep(10000);
+                JamBot.daServer.connect();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
-        catch (Exception e)
+        else
         {
-            e.printStackTrace();
+            sender.sendPM("YOU CAN'T DO DAT!!!!");
         }
     }
 

@@ -26,7 +26,7 @@ public class JamBot
 {
     public static final Logger log = LogManager.getLogger("JamBot");
 
-    public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames" };
+    public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames", "#FlowStoneEnergy" };
 
     public static IServer daServer;
 
@@ -87,8 +87,8 @@ public class JamBot
     private void registerDefaultResponders()
     {
         API.registerResponder(new CommandHelp());
-//        API.registerResponder(new CommandRestart());
-//        API.registerResponder(new CommandDie());
+        API.registerResponder(new CommandRestart());
+        API.registerResponder(new CommandDie());
         API.registerResponder(new CommandListChan());
         API.registerResponder(new ResponderGG());
     }
