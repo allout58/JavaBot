@@ -21,5 +21,9 @@ public interface IServer
 
     IChannel[] getChannels();
 
+    IChannel getChannel(String name);
+
     IChannel joinChannel(String name);
+
+    void sendToAllChannels(String message);
 }

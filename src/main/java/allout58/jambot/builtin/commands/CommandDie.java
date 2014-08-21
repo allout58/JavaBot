@@ -12,7 +12,15 @@ public class CommandDie implements ICommand
     @Override
     public void processCommand(IClient sender, String[] args)
     {
-        JamBot.daServer.disconnect();
+//        if (sender.isOp())
+//        {
+            JamBot.daServer.sendToAllChannels("Ay, ay, a scratch, a scratch; marry, 'tis enough.");
+            JamBot.daServer.disconnect();
+//        }
+//        else
+//        {
+//            sender.sendPM("YOU CAN'T DO DAT!!!!");
+//        }
     }
 
     @Override

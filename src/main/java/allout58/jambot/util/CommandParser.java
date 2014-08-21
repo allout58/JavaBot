@@ -1,8 +1,10 @@
 package allout58.jambot.util;
 
 import allout58.jambot.api.API;
+import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
+import allout58.jambot.api.IMatcher;
 import allout58.jambot.api.IResponder;
 import allout58.jambot.config.Config;
 
@@ -16,6 +18,8 @@ public class CommandParser
         if (message.startsWith(Config.commandPrefix.getPrefix()))
         {
             String cmdName = message.substring(Config.commandPrefix.getPrefix().length());
+            if (cmdName.contains(" "))
+                cmdName = cmdName.substring(0, cmdName.indexOf(" "));
             for (IResponder r : API.responders)
             {
                 if (!(r instanceof ICommand)) continue;
@@ -29,5 +33,14 @@ public class CommandParser
             return false;
         }
         else return false;
+    }
+
+    public static void doMatchers(IChannel sender, String message)
+    {
+        for (IResponder r : API.responders)
+        {
+            if (!(r instanceof IMatcher)) continue;
+            ((IMatcher) r).match(sender, message);
+        }
     }
 }

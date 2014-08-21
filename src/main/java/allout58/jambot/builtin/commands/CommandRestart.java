@@ -15,10 +15,7 @@ public class CommandRestart implements ICommand
     {
         try
         {
-            for (IChannel channel : JamBot.daServer.getChannels())
-            {
-                channel.sendMessage("Rebooting... Goodbye");
-            }
+            JamBot.daServer.sendToAllChannels("Rebooting... Goodbye!");
             JamBot.daServer.disconnect();
             Thread.sleep(10000);
             JamBot.daServer.connect();

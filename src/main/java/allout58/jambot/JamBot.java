@@ -4,7 +4,9 @@ import allout58.jambot.api.API;
 import allout58.jambot.api.IServer;
 import allout58.jambot.builtin.commands.CommandDie;
 import allout58.jambot.builtin.commands.CommandHelp;
+import allout58.jambot.builtin.commands.CommandListChan;
 import allout58.jambot.builtin.commands.CommandRestart;
+import allout58.jambot.builtin.commands.ResponderGG;
 import allout58.jambot.builtin.servers.irc.IRCServer;
 import allout58.jambot.config.Config;
 import joptsimple.OptionParser;
@@ -85,8 +87,10 @@ public class JamBot
     private void registerDefaultResponders()
     {
         API.registerResponder(new CommandHelp());
-        API.registerResponder(new CommandRestart());
-        API.registerResponder(new CommandDie());
+//        API.registerResponder(new CommandRestart());
+//        API.registerResponder(new CommandDie());
+        API.registerResponder(new CommandListChan());
+        API.registerResponder(new ResponderGG());
     }
 
 }

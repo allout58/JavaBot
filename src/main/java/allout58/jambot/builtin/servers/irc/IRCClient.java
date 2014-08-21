@@ -2,60 +2,142 @@ package allout58.jambot.builtin.servers.irc;
 
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
+import allout58.jambot.api.IServer;
+import allout58.jambot.util.QueuedWriter;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by James Hollowell on 8/19/2014.
  */
 public class IRCClient implements IClient
 {
+    private QueuedWriter writer;
+    private IServer server;
     private String name;
-    private IChannel channel;
-    private boolean isOp = false;
-    private boolean isVoice = false;
+    private Map<String, IChannel> channels = new HashMap<String, IChannel>();
+    private Map<IChannel, Boolean> opChannels = new HashMap<IChannel, Boolean>();
+    private Map<IChannel, Boolean> voiceChannels = new HashMap<IChannel, Boolean>();
 
-    public IRCClient(String name, IRCChannel channel)
+    public IRCClient(String name)
     {
-        if (name.startsWith("@"))
-            isOp = true;
-        if (name.startsWith("+"))
-            isVoice = true;
-
-        this.name = (isVoice || isOp) ? name.substring(1) : name; //remove the '@' or '+' for ops and voice
-        this.channel = channel;
+        this.name = stripName(name);
     }
 
+    public IRCClient(String name, IChannel channel)
+    {
+        this.name = stripName(name);
+        addChannel(channel);
+    }
+
+    public void addChannel(IChannel channel)
+    {
+        if (writer == null)
+            writer = channel.getWriter();
+        if (server == null)
+            server = channel.getServer();
+        channels.put(channel.getName(), channel);
+        setOp(false, channel);
+        setVoice(false, channel);
+    }
+
+    public void removeChannel(IChannel channel)
+    {
+        channels.remove(channel.getName());
+        opChannels.remove(channel);
+        voiceChannels.remove(channel);
+    }
+
+    @Override
+    public void setOp(boolean op, IChannel opChannel)
+    {
+        opChannels.put(opChannel, op);
+    }
+
+    @Override
+    public void setVoice(boolean voice, IChannel voiceChannel)
+    {
+        voiceChannels.put(voiceChannel, voice);
+    }
+
+    @Override
     public String getName()
     {
         return name;
     }
 
     @Override
-    public boolean canRecievePM()
+    public boolean canReceivePM()
     {
         return true;
     }
 
     @Override
-    public boolean isOp()
+    public boolean canReceiveNotice()
     {
-        return isOp;
+        return true;
     }
 
     @Override
-    public boolean isVoice()
+    public boolean isOp(IChannel channel)
     {
-        return isVoice;
+        return opChannels.get(channel);
+    }
+
+    @Override
+    public boolean isVoice(IChannel channel)
+    {
+        return voiceChannels.get(channel);
     }
 
     @Override
     public void sendPM(String message)
     {
-        channel.getWriter().addToQueue("PRIVMSG " + name.substring(0, name.indexOf("!")) + " :" + message);
+        writer.addToQueue("PRIVMSG " + name + " :" + message); //name.substring(0, name.indexOf("!"))
     }
 
     @Override
-    public IChannel getChannel()
+    public void sendNotice(String message)
     {
-        return channel;
+        writer.addToQueue("NOTICE " + name + " :" + message);
+    }
+
+    @Override
+    public Collection<IChannel> getChannels()
+    {
+        return channels.values();
+    }
+
+    @Override
+    public IServer getServer()
+    {
+        return server;
+    }
+
+    //Helpful
+
+    public static boolean nameIsOp(String name)
+    {
+        return name.startsWith("@");
+    }
+
+    public static boolean nameIsVoice(String name)
+    {
+        return name.startsWith("+");
+    }
+
+    public static String stripName(String name)
+    {
+        return nameIsOp(name) || nameIsVoice(name) ? name.substring(1) : name;
+    }
+
+    public String[] splitID(String name)
+    {
+        name = stripName(name); //remove first @ or +
+        String[] out = new String[3];
+        out[0] = name.contains("@") ? name : name.substring(0, name.indexOf("@"));
+        return out;
     }
 }

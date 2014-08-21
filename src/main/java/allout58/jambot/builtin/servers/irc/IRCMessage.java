@@ -5,34 +5,31 @@ package allout58.jambot.builtin.servers.irc;
  */
 public class IRCMessage
 {
-    private IRCClient sender;
+    private String sender = "";
     private String command = "";
     private String message = "";
-    private IRCClient recipient;
+    private String[] mArgs;
 
-    public IRCMessage(String raw, IRCChannel channel)
+    public IRCMessage(String raw)
     {
         String[] splits = raw.split(" ");
         if (raw.startsWith(":"))
         {
-            sender = new IRCClient(splits[0].substring(1), channel);
+            sender = splits[0].substring(1);
         }
         if (splits.length > 1)
         {
             command = splits[1];
         }
-        if (splits.length > 2)
+        for (int i = 2; i < splits.length; i++)
         {
-            recipient = new IRCClient(splits[2], channel);
-        }
-        for (int i = 3; i < splits.length; i++)
-        {
-            message += (splits[i].startsWith(":") ? splits[i].substring(1) : splits[i]) + " ";
+            message += splits[i] + " ";
         }
         message = message.trim(); //remove last " " from string
+        mArgs = message.split(" ");
     }
 
-    public IRCClient getSender()
+    public String getSender()
     {
         return sender;
     }
@@ -45,5 +42,22 @@ public class IRCMessage
     public String getMessage()
     {
         return message;
+    }
+
+    public String[] getArgs()
+    {
+        return mArgs;
+    }
+
+    public int getIntCommand()
+    {
+        try
+        {
+            return Integer.parseInt(command);
+        }
+        catch (NumberFormatException e)
+        {
+            return -1;
+        }
     }
 }

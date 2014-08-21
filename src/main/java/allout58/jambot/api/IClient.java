@@ -1,17 +1,31 @@
 package allout58.jambot.api;
 
+import java.util.Collection;
+
 /**
  * Created by James Hollowell on 8/16/2014.
  */
 public interface IClient
 {
-    boolean canRecievePM();
+    String getName();
 
-    boolean isOp();
+    boolean canReceivePM();
 
-    boolean isVoice();
+    boolean canReceiveNotice();
+
+    void setOp(boolean op, IChannel channel);
+
+    void setVoice(boolean voice, IChannel channel);
+
+    boolean isOp(IChannel channel);
+
+    boolean isVoice(IChannel channel);
 
     void sendPM(String message);
 
-    IChannel getChannel();
+    void sendNotice(String message);
+
+    Collection<IChannel> getChannels();
+
+    IServer getServer();
 }

@@ -36,9 +36,9 @@ public class IRCChannel implements IChannel
         List<IClient> ops = new ArrayList<IClient>();
         for (IClient c : clients)
         {
-            if (c.isOp()) ops.add(c);
+            if (c.isOp(this)) ops.add(c);
         }
-        return (IClient[]) ops.toArray();
+        return ops.toArray(new IClient[ops.size()]);
     }
 
     @Override
@@ -47,15 +47,24 @@ public class IRCChannel implements IChannel
         List<IClient> ops = new ArrayList<IClient>();
         for (IClient c : clients)
         {
-            if (c.isVoice()) ops.add(c);
+            if (c.isVoice(this)) ops.add(c);
         }
-        return (IClient[]) ops.toArray();
+        return ops.toArray(new IClient[ops.size()]);
     }
 
     @Override
     public IClient[] getAllClients()
     {
         return (IClient[]) clients.toArray();
+    }
+
+    public IClient getClient(String name)
+    {
+        for (IClient c : getAllClients())
+        {
+            if (c.getName().equals(name)) return c;
+        }
+        return null;
     }
 
     @Override
@@ -85,7 +94,7 @@ public class IRCChannel implements IChannel
     @Override
     public void sendMessage(String message)
     {
-        writer.addToQueue("PRIVMSG " + getName() + " :"+message);
+        writer.addToQueue("PRIVMSG " + getName() + " :" + message);
     }
 
     @Override
@@ -98,19 +107,5 @@ public class IRCChannel implements IChannel
     public void deactivate()
     {
         writer.addToQueue("PART " + getName());
-    }
-
-    public void onMessage(IRCMessage message)
-    {
-        if ("353".equals(message.getCommand()))// ./MODES response
-        {
-            String msg = message.getMessage();
-            String[] names = msg.split(" ");
-            for (String n : names)
-            {
-                IRCClient c = new IRCClient(name, this);
-                clients.add(c);
-            }
-        }
     }
 }

@@ -74,9 +74,13 @@ public class CallbackReader implements Runnable
     {
         try
         {
-            isRunning = false;
-            daThread.join(100);
-            callbacks.clear();
+            synchronized (callbacks)
+            {
+                callbacks.clear();
+                isRunning = false;
+                daThread.join(1000);
+            }
+
         }
         catch (Exception e)
         {
@@ -94,10 +98,6 @@ public class CallbackReader implements Runnable
             {
                 if (callbacks.size() < 1)
                     log.warn("No callback objects defined; messages being received and not processed");
-                //                if (Config.debugMode)
-                //                {
-                //                    log.info("New message: " + line);
-                //                }
                 synchronized (callbacks)
                 {
                     for (IReaderCallback callback : callbacks)

@@ -89,6 +89,12 @@ public class CmdServer implements IServer, CallbackReader.IReaderCallback
     }
 
     @Override
+    public IChannel getChannel(String name)
+    {
+        return fakeChannel;
+    }
+
+    @Override
     public void readerCallback(String message)
     {
         writer.addToQueue("Message received: " + message);
@@ -105,5 +111,14 @@ public class CmdServer implements IServer, CallbackReader.IReaderCallback
     public IChannel joinChannel(String channel)
     {
         return fakeChannel;
+    }
+
+    @Override
+    public void sendToAllChannels(String message)
+    {
+        for (IChannel channel : getChannels())
+        {
+            channel.sendMessage(message);
+        }
     }
 }

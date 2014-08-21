@@ -5,5 +5,5 @@ package allout58.jambot.api;
  */
 public interface IMatcher extends IResponder
 {
-    void match(IClient sender, String msg);
+    void match(IChannel sender, String msg);
 }

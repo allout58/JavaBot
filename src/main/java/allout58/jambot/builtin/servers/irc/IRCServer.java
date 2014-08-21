@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by James Hollowell on 8/18/2014.
@@ -26,7 +26,8 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
 {
     private Logger log = LogManager.getLogger();
 
-    private final List<IRCChannel> channels = new ArrayList<IRCChannel>();
+    private final Map<String, IRCChannel> channels = new HashMap<String, IRCChannel>();
+    private final Map<String, IRCClient> clients = new HashMap<String, IRCClient>();
 
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
@@ -74,7 +75,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             Socket daSocket = new Socket(host, port);
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(daSocket.getOutputStream()));
             bufferedReader = new BufferedReader(new InputStreamReader(daSocket.getInputStream()));
-            authenticate("daBot", "");
+            authenticate("The_JavaBot", "");
 
             writer.setWriter(bufferedWriter);
             writer.start();
@@ -125,7 +126,13 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
     @Override
     public IChannel[] getChannels()
     {
-        return channels.toArray(new IChannel[]{});
+        return channels.values().toArray(new IChannel[channels.size()]);
+    }
+
+    @Override
+    public IRCChannel getChannel(String name)
+    {
+        return channels.get(name);
     }
 
     @Override
@@ -136,29 +143,22 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             writer.addToQueue("PONG " + message.substring(6));
             return;
         }
-        IRCMessage msg = new IRCMessage(message, defaultChannel);
-        if ("376".equals(msg.getCommand()))
+        IRCMessage msg = new IRCMessage(message);
+        tryStringCommand(msg);
+        if (!tryNumericCommand(msg))
         {
-            isConnected = true;
-            for (String name : JamBot.channels)
+            if (!CommandParser.tryCommand(getOrCreateClient(msg.getSender()), msg.getMessage().substring(msg.getMessage().indexOf(":") + 1)))
             {
-                channels.add((IRCChannel) joinChannel(name));
+                log.info("IRC Regular message: " + message);
             }
-            return;
-        }
-
-        for (IRCChannel channel : channels)
-        {
-            channel.onMessage(msg);
-        }
-
-        if (!CommandParser.tryCommand(msg.getSender(), msg.getMessage()))
-        {
-            log.info("IRC Regular message: " + message);
+            else
+            {
+                log.info("IRC Command parsed: " + message);
+            }
         }
         else
         {
-            log.info("IRC Command parsed: " + message);
+            log.info("IRC Numeric Command parsed: " + message);
         }
     }
 
@@ -172,4 +172,77 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         return channel;
     }
 
+    @Override
+    public void sendToAllChannels(String message)
+    {
+        for (IChannel channel : getChannels())
+        {
+            channel.sendMessage(message);
+        }
+    }
+
+    private boolean tryNumericCommand(IRCMessage msg)
+    {
+        int command = msg.getIntCommand();
+
+        switch (command)
+        {
+            case -1:
+                return false;
+            case 353:
+                String message = msg.getMessage();
+                if (message.indexOf(":") == 0) message = message.substring(1);
+                String[] args = message.split(" ");
+                IRCChannel chan = getChannel(args[2]);
+                for (int i = 4; i < args.length; i++)
+                {
+                    if (args[i].startsWith(":")) args[i] = args[i].substring(1);
+                    String stripName = IRCClient.stripName(args[i]);
+                    IRCClient c = getOrCreateClient(stripName);
+                    c.addChannel(chan);
+                    c.setOp(IRCClient.nameIsOp(args[i]), chan);
+                    c.setVoice(IRCClient.nameIsVoice(args[i]), chan);
+                }
+                return true;
+            case 376:
+                isConnected = true;
+                for (String name : JamBot.channels)
+                {
+                    channels.put(name, (IRCChannel) joinChannel(name));
+                }
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void tryStringCommand(IRCMessage msg)
+    {
+        String command = msg.getCommand();
+        if ("PRIVMSG".equals(command))
+        {
+            if (msg.getArgs()[0].startsWith("#")) //its a channel
+            {
+                IChannel c = getChannel(msg.getArgs()[0]);
+                CommandParser.doMatchers(c, msg.getMessage());
+            }
+            else
+            {
+                getOrCreateClient(msg.getSender()).sendPM("You talk only to meh? You got somtin to hide??");
+            }
+        }
+    }
+
+    private IRCClient getOrCreateClient(String name)
+    {
+        if (name.contains("!"))
+            name = name.substring(0, name.indexOf("!"));
+        IRCClient c = clients.get(name);
+        if (c == null)
+        {
+            c = new IRCClient(name);
+            clients.put(name, c);
+        }
+        return c;
+    }
 }
