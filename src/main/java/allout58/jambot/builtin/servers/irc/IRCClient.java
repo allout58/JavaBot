@@ -187,8 +187,8 @@ public class IRCClient implements IClient
         out[0] = idxBang == -1 ? nname : nname.substring(0, idxBang);
         if (idxAt != -1)
         {
-            out[1] = nname.substring(idxBang + 1, idxAt + 1);
-            out[2] = nname.substring(idxAt);
+            out[1] = nname.substring(idxBang + 1, idxAt);
+            out[2] = nname.substring(idxAt + 1);
         }
         return out;
     }

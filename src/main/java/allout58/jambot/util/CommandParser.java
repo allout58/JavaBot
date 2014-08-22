@@ -31,21 +31,28 @@ public class CommandParser
             for (IResponder r : API.responders)
             {
                 if (!(r instanceof ICommand)) continue;
-                if (r.getName().equals(cmdName) && Permissions.canDo(sender.getPermLevel(chan), ((ICommand) r).getCommandLevel()))
+                if (r.getName().equals(cmdName))
                 {
-                    String woComName = message.substring(Config.commandPrefix.getPrefix().length() + cmdName.length());
-                    List<String> a1 = Arrays.asList(woComName.split(" "));
-                    ArrayList<String> a2 = new ArrayList<String>(a1);
-                    if ("".equals(a2.get(0))) a2.remove(0);
-                    try
+                    if (Permissions.canDo(sender.getPermLevel(chan), ((ICommand) r).getCommandLevel()))
                     {
-                        ((ICommand) r).processCommand(sender, chan, a2.toArray(new String[a2.size()]));
+                        String woComName = message.substring(Config.commandPrefix.getPrefix().length() + cmdName.length());
+                        List<String> a1 = Arrays.asList(woComName.split(" "));
+                        ArrayList<String> a2 = new ArrayList<String>(a1);
+                        if ("".equals(a2.get(0))) a2.remove(0);
+                        try
+                        {
+                            ((ICommand) r).processCommand(sender, chan, a2.toArray(new String[a2.size()]));
+                        }
+                        catch (Exception e)
+                        {
+                            log.error("Error processing command " + r.getName(), e);
+                        }
+                        return true;
                     }
-                    catch (Exception e)
+                    else
                     {
-                        log.error("Error processing command " + r.getName(), e);
+                        sender.sendPM("You don't have permission to do this. Your perms: " + sender.getPermLevel(chan).name() + ". Required: " + ((ICommand) r).getCommandLevel().name());
                     }
-                    return true;
                 }
             }
             return false;
