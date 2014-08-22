@@ -7,12 +7,20 @@ import allout58.jambot.api.ICommand;
 import allout58.jambot.api.IMatcher;
 import allout58.jambot.api.IResponder;
 import allout58.jambot.config.Config;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by James Hollowell on 8/18/2014.
  */
 public class CommandParser
 {
+    private static final Logger log = LogManager.getLogger("CommandParser");
+
     public static boolean tryCommand(IClient sender, IChannel chan, String message)
     {
         if (message.startsWith(Config.commandPrefix.getPrefix()))
@@ -23,10 +31,20 @@ public class CommandParser
             for (IResponder r : API.responders)
             {
                 if (!(r instanceof ICommand)) continue;
-                if (r.getName().equals(cmdName))
+                if (r.getName().equals(cmdName) && Permissions.canDo(sender.getPermLevel(chan), ((ICommand) r).getCommandLevel()))
                 {
                     String woComName = message.substring(Config.commandPrefix.getPrefix().length() + cmdName.length());
-                    ((ICommand) r).processCommand(sender, chan, woComName.split(" "));
+                    List<String> a1 = Arrays.asList(woComName.split(" "));
+                    ArrayList<String> a2 = new ArrayList<String>(a1);
+                    if ("".equals(a2.get(0))) a2.remove(0);
+                    try
+                    {
+                        ((ICommand) r).processCommand(sender, chan, a2.toArray(new String[a2.size()]));
+                    }
+                    catch (Exception e)
+                    {
+                        log.error("Error processing command " + r.getName(), e);
+                    }
                     return true;
                 }
             }

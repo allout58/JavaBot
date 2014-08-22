@@ -1,5 +1,7 @@
 package allout58.jambot.api;
 
+import allout58.jambot.util.Permissions;
+
 import java.util.Collection;
 
 /**
@@ -7,7 +9,11 @@ import java.util.Collection;
  */
 public interface IClient
 {
-    String getName();
+    String getNick();
+
+    String getUser();
+
+    String getServerAddress();
 
     boolean canReceivePM();
 
@@ -30,4 +36,8 @@ public interface IClient
     Collection<IChannel> getChannels();
 
     IServer getServer();
+
+    void setFullName(String name);
+
+    Permissions.EnumCommandPermission getPermLevel(IChannel chan);
 }

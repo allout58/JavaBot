@@ -4,6 +4,7 @@ import allout58.jambot.JamBot;
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
+import allout58.jambot.util.Permissions;
 
 /**
  * Created by James Hollowell on 8/19/2014.
@@ -13,7 +14,7 @@ public class CommandRestart implements ICommand
     @Override
     public void processCommand(IClient sender, IChannel channel, String[] args)
     {
-        if (sender.isOp(channel))
+        if (Permissions.isOwner(sender))
         {
             try
             {
@@ -31,6 +32,12 @@ public class CommandRestart implements ICommand
         {
             sender.sendPM("YOU CAN'T DO DAT!!!!");
         }
+    }
+
+    @Override
+    public Permissions.EnumCommandPermission getCommandLevel()
+    {
+        return Permissions.EnumCommandPermission.BotAdmin;
     }
 
     @Override

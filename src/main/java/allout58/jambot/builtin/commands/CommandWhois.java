@@ -6,34 +6,31 @@ import allout58.jambot.api.ICommand;
 import allout58.jambot.util.Permissions;
 
 /**
- * Created by James Hollowell on 8/21/2014.
+ * Created by James Hollowell on 8/22/2014.
  */
-public class CommandPart implements ICommand
+public class CommandWhois implements ICommand
 {
     @Override
     public void processCommand(IClient sender, IChannel channel, String[] args)
     {
-        if (sender.isOp(channel))
-        {
-            channel.getServer().partChannel(args[0]);
-        }
+        channel.getWriter().addToQueue("WHOIS " + args[0]);
     }
 
     @Override
     public Permissions.EnumCommandPermission getCommandLevel()
     {
-        return Permissions.EnumCommandPermission.ChannelOp;
+        return Permissions.EnumCommandPermission.BotAdmin;
     }
 
     @Override
     public String getName()
     {
-        return "part";
+        return "whois";
     }
 
     @Override
     public String getDescription()
     {
-        return "Tell the bot to leave a channel";
+        return "Asks the server WHOIS";
     }
 }

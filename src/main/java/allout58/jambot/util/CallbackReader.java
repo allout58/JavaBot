@@ -16,7 +16,7 @@ public class CallbackReader implements Runnable
     public interface IReaderCallback
     {
         /**
-         * Callback for @link{allout58.jambot.util.CallbackReader}
+         * Callback for @see{allout58.jambot.util.CallbackReader}
          *
          * @param message Message recieved on the reader
          */
@@ -84,7 +84,7 @@ public class CallbackReader implements Runnable
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.error("Error with CallbackReader.stop(): ", e);
         }
     }
 
@@ -109,8 +109,7 @@ public class CallbackReader implements Runnable
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            log.error("Error in callback reader:", e);
         }
-
     }
 }

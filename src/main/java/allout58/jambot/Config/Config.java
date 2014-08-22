@@ -13,6 +13,7 @@ public class Config
     public static boolean debugMode = false;
     public static File homeDir;
     public static String botNick;
+    public static String owner;
 
     public static void init()
     {

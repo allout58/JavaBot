@@ -62,7 +62,7 @@ public class IRCChannel implements IChannel
     {
         for (IClient c : getAllClients())
         {
-            if (c.getName().equals(name)) return c;
+            if (c.getUser().equals(name)) return c;
         }
         return null;
     }
@@ -105,6 +105,12 @@ public class IRCChannel implements IChannel
     public void sendMessage(String message)
     {
         writer.addToQueue("PRIVMSG " + getName() + " :" + message);
+    }
+
+    @Override
+    public void sendNotice(String message)
+    {
+        writer.addToQueue("NOTICE " + getName() + " :" + message);
     }
 
     @Override

@@ -3,6 +3,7 @@ package allout58.jambot.builtin.servers.cmd;
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.IServer;
+import allout58.jambot.util.Permissions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,6 +13,24 @@ import java.util.Collection;
  */
 public class CmdClient implements IClient
 {
+    @Override
+    public String getNick()
+    {
+        return "CmdClient";
+    }
+
+    @Override
+    public String getUser()
+    {
+        return "CmdClient";
+    }
+
+    @Override
+    public String getServerAddress()
+    {
+        return "127.0.0.1";
+    }
+
     @Override
     public boolean canReceivePM()
     {
@@ -73,9 +92,15 @@ public class CmdClient implements IClient
     }
 
     @Override
-    public String getName()
+    public void setFullName(String name)
     {
-        return "CmdClient";
+
+    }
+
+    @Override
+    public Permissions.EnumCommandPermission getPermLevel(IChannel chan)
+    {
+        return Permissions.EnumCommandPermission.BotAdmin;
     }
 
     @Override

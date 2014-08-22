@@ -2,6 +2,7 @@ package allout58.jambot.builtin.servers.irc;
 
 import allout58.jambot.JamBot;
 import allout58.jambot.api.IChannel;
+import allout58.jambot.api.IClient;
 import allout58.jambot.api.IServer;
 import allout58.jambot.config.Config;
 import allout58.jambot.util.CallbackReader;
@@ -203,6 +204,16 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         {
             case -1:
                 return false;
+            case 311:
+                String[] arg = msg.getArgs();
+                String nick = arg[1];
+                String user = arg[2];
+                String server = arg[3];
+                log.info("Whois recieved: " + nick + "!" + user + "@" + server);
+                //Map used to be nick -> client; this will convert it to the more appropriate uname -> client
+                IClient c = renameClient(nick, user);
+                c.setFullName(nick + "!" + user + "@" + server);
+                return false;
             case 353:
                 String message = msg.getMessage();
                 if (message.indexOf(":") == 0) message = message.substring(1);
@@ -212,11 +223,12 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 {
                     if (args[i].startsWith(":")) args[i] = args[i].substring(1);
                     String stripName = IRCClient.stripName(args[i]);
-                    IRCClient c = getOrCreateClient(stripName);
-                    c.addChannel(chan);
-                    c.setOp(IRCClient.nameIsOp(args[i]), chan);
-                    c.setVoice(IRCClient.nameIsVoice(args[i]), chan);
-                    chan.addClient(c);
+                    IRCClient client = getOrCreateClient(stripName);
+                    client.addChannel(chan);
+                    client.setOp(IRCClient.nameIsOp(args[i]), chan);
+                    client.setVoice(IRCClient.nameIsVoice(args[i]), chan);
+                    chan.addClient(client);
+                    writer.addToQueue("WHOIS " + stripName); //request full name
                 }
                 return true;
             case 376:
@@ -248,13 +260,12 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         }
         else if ("NICK".equals(command))
         {
-            IRCClient c = getOrCreateClient(msg.getSender());
-            renameClient(c, msg.getArgs()[0].substring(1));
+            renameClient(msg.getSender(), msg.getArgs()[0].substring(1));
         }
         else if ("JOIN".equals(command))
         {
             IRCClient c = getOrCreateClient(msg.getSender());
-            if (Config.botNick.equals(c.getName()))
+            if (Config.botNick.equals(c.getNick()))
                 return;
             IRCChannel chan = getChannel(msg.getArgs()[0]);
             c.addChannel(chan);
@@ -263,9 +274,20 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         else if ("PART".equals(command))
         {
             IRCClient c = getOrCreateClient(msg.getSender());
+            if (Config.botNick.equals(c.getNick()))
+                return;
             IRCChannel chan = getChannel(msg.getArgs()[0]);
             c.removeChannel(chan);
             chan.removeClient(c);
+        }
+        else if ("QUIT".equals(command))
+        {
+            IRCClient c = getOrCreateClient(msg.getSender());
+            for (IRCChannel chan : channels.values())
+            {
+                chan.removeClient(c);
+                c.removeChannel(chan);
+            }
         }
         else if ("MODE".equals(command))
         {
@@ -296,10 +318,12 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         return c;
     }
 
-    private void renameClient(IRCClient client, String newName)
+    private IClient renameClient(String oldName, String newName)
     {
-        clients.remove(client.getName());
-        client.setNick(newName);
-        clients.put(newName, client);
+        IRCClient c = getOrCreateClient(oldName);
+        clients.remove(oldName);
+        c.setNick(newName);
+        clients.put(newName, c);
+        return c;
     }
 }

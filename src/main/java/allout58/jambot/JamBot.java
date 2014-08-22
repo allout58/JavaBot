@@ -8,6 +8,7 @@ import allout58.jambot.builtin.commands.CommandJoin;
 import allout58.jambot.builtin.commands.CommandListChan;
 import allout58.jambot.builtin.commands.CommandPart;
 import allout58.jambot.builtin.commands.CommandRestart;
+import allout58.jambot.builtin.commands.CommandWhois;
 import allout58.jambot.builtin.commands.ResponderGG;
 import allout58.jambot.builtin.servers.irc.IRCServer;
 import allout58.jambot.config.Config;
@@ -52,8 +53,9 @@ public class JamBot
         parser.accepts("h").forHelp();
         parser.accepts("?").forHelp();
         final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
-        final OptionSpec<Boolean> flagDebug = parser.acceptsAll(Arrays.asList("debug", "d"), "Turn debug code on. (Could spam console)").withRequiredArg().ofType(Boolean.TYPE).defaultsTo(false);
+        parser.acceptsAll(Arrays.asList("debug", "d"), "Turn debug code on. (Could spam console)");
         final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withRequiredArg().defaultsTo("JavaBot");
+        final OptionSpec<String> optionOwner = parser.acceptsAll(Arrays.asList("owner", "o"), "Sets the bots owner nickname.").withRequiredArg().defaultsTo("allout58");
 
         final OptionSet options = parser.parse(args);
 
@@ -71,8 +73,9 @@ public class JamBot
         }
 
         Config.homeDir = options.valueOf(optionHome);
-        Config.debugMode = options.valueOf(flagDebug);
+        Config.debugMode = options.has("debug") || options.has("d");
         Config.botNick = options.valueOf(optionNick);
+        Config.owner = options.valueOf(optionOwner);
     }
 
     private void logTest()
@@ -94,6 +97,7 @@ public class JamBot
         API.registerResponder(new CommandListChan());
         API.registerResponder(new CommandJoin());
         API.registerResponder(new CommandPart());
+        API.registerResponder(new CommandWhois());
 
         API.registerResponder(new ResponderGG());
     }

@@ -70,6 +70,12 @@ public class CmdChannel implements IChannel
     }
 
     @Override
+    public void sendNotice(String message)
+    {
+        sendMessage(message);
+    }
+
+    @Override
     public void activate()
     {
 

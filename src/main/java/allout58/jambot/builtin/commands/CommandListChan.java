@@ -3,6 +3,7 @@ package allout58.jambot.builtin.commands;
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
+import allout58.jambot.util.Permissions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class CommandListChan implements ICommand
                 m.add("Ops:");
                 for (IClient client : c.getOps())
                 {
-                    m.add(" @" + client.getName());
+                    m.add(" @" + client.getNick() + "!" + client.getUser());
                     nList.remove(client);
                 }
             }
@@ -45,7 +46,7 @@ public class CommandListChan implements ICommand
                 m.add("Voice:");
                 for (IClient client : c.getVoice())
                 {
-                    m.add(" +" + client.getName());
+                    m.add(" +" + client.getNick());
                     nList.remove(client);
                 }
             }
@@ -54,12 +55,18 @@ public class CommandListChan implements ICommand
                 m.add("Normal: ");
                 for (IClient client : nList)
                 {
-                    m.add(" " + client.getName());
+                    m.add(" " + client.getNick());
                 }
             }
         }
         for (String msg : m)
             sender.sendPM(msg);
+    }
+
+    @Override
+    public Permissions.EnumCommandPermission getCommandLevel()
+    {
+        return Permissions.EnumCommandPermission.Everyone;
     }
 
     @Override

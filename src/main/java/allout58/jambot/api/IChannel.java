@@ -23,6 +23,8 @@ public interface IChannel
 
     void sendMessage(String message);
 
+    void sendNotice(String message);
+
     void activate();
 
     void deactivate();
