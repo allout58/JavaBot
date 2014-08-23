@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class IRCServer implements IServer, CallbackReader.IReaderCallback
 {
-    private Logger log = LogManager.getLogger();
+    private Logger log = LogManager.getLogger("IRCServer");
 
     private final Map<String, IRCChannel> channels = new HashMap<String, IRCChannel>();
     private final Map<String, IRCClient> clients = new HashMap<String, IRCClient>();

@@ -15,6 +15,7 @@ buildscript{
 
 launch4j{
     mainClassName="allout58.jambot.Start"
+    headerType="console"
     cmdLine=true
     jar="lib/JamBot-1.0.jar"
 }

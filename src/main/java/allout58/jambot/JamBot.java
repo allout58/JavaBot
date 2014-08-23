@@ -35,9 +35,9 @@ public class JamBot
 
     public void init(String[] args)
     {
-        parseOptions(args);
-        //logTest();
         Config.init();
+        if (!parseOptions(args)) return;
+        //logTest();
 
         registerDefaultResponders();
 
@@ -45,13 +45,11 @@ public class JamBot
         daServer.connect();
     }
 
-    private void parseOptions(String[] args)
+    private boolean parseOptions(String[] args)
     {
         final OptionParser parser = new OptionParser();
 
-        parser.accepts("help").forHelp();
-        parser.accepts("h").forHelp();
-        parser.accepts("?").forHelp();
+        parser.acceptsAll(Arrays.asList("help", "h", "?")).forHelp();
         final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
         parser.acceptsAll(Arrays.asList("debug", "d"), "Turn debug code on. (Could spam console)");
         final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withRequiredArg().defaultsTo("JavaBot");
@@ -64,7 +62,7 @@ public class JamBot
             try
             {
                 parser.printHelpOn(System.out);
-                return;
+                return false;
             }
             catch (IOException e)
             {
@@ -76,6 +74,7 @@ public class JamBot
         Config.debugMode = options.has("debug") || options.has("d");
         Config.botNick = options.valueOf(optionNick);
         Config.owner = options.valueOf(optionOwner);
+        return true;
     }
 
     private void logTest()

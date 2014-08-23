@@ -21,7 +21,7 @@ public class QueuedWriter implements Runnable
     private boolean isRunning = false;
     private BufferedWriter writer;
 
-    private Logger log = LogManager.getLogger();
+    private Logger log = LogManager.getLogger("QueuedWriter");
 
     public QueuedWriter()
     {

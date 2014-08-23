@@ -26,7 +26,7 @@ public class CmdServer implements IServer, CallbackReader.IReaderCallback
     private BufferedReader bufferedReader;
     private QueuedWriter writer = new QueuedWriter("CmdChannelWriter");
     private CallbackReader reader = new CallbackReader("CmdChannelReader");
-    private Logger log = LogManager.getLogger();
+    private Logger log = LogManager.getLogger("CmdServer");
 
     @Override
     public boolean canAuthenticate()
