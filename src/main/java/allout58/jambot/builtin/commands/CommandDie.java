@@ -14,15 +14,8 @@ public class CommandDie implements ICommand
     @Override
     public void processCommand(IClient sender, IChannel chan, String[] args)
     {
-        if (Permissions.isOwner(sender))
-        {
-            JamBot.daServer.sendToAllChannels("Ay, ay, a scratch, a scratch; marry, 'tis enough.");
-            JamBot.daServer.disconnect();
-        }
-        else
-        {
-            sender.sendPM("YOU CAN'T DO DAT!!!!");
-        }
+        JamBot.daServer.sendToAllChannels("Ay, ay, a scratch, a scratch; marry, 'tis enough.");
+        JamBot.daServer.disconnect();
     }
 
     @Override

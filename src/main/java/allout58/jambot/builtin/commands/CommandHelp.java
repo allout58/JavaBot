@@ -59,10 +59,7 @@ public class CommandHelp implements ICommand
         {
             for (String m : message)
             {
-                if (chan != null)
-                    chan.sendNotice(m);
-                else
-                    sender.sendNotice(m);
+                sender.sendNotice(m);
             }
         }
         else if (sender.canReceivePM())

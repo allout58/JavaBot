@@ -33,11 +33,24 @@ public class JamBot
 
     public static IServer daServer;
 
+    private final OptionParser parser = new OptionParser();
+    private OptionSet options;
+
+    private final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
+    private final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withOptionalArg();
+    private final OptionSpec<String> optionOwner = parser.acceptsAll(Arrays.asList("owner", "o"), "Sets the bots owner nickname.").withOptionalArg();
+
     public void init(String[] args)
     {
-        Config.init();
         if (!parseOptions(args)) return;
+        Config.init();
         //logTest();
+        parseOptions2();
+
+        log.info("Config.debugMode: " + Config.debugMode);
+        log.info("Config.botNick: " + Config.botNick);
+        log.info("Config.owner: " + Config.owner);
+        log.info("Config.commandPrefix: " + Config.commandPrefix.name());
 
         registerDefaultResponders();
 
@@ -45,17 +58,21 @@ public class JamBot
         daServer.connect();
     }
 
+    private void parseOptions2()
+    {
+        Config.debugMode = options.has("debug") || options.has("d");
+        if (options.hasArgument(optionNick))
+            Config.botNick = options.valueOf(optionNick);
+        if (options.hasArgument(optionOwner))
+            Config.owner = options.valueOf(optionOwner);
+    }
+
     private boolean parseOptions(String[] args)
     {
-        final OptionParser parser = new OptionParser();
-
         parser.acceptsAll(Arrays.asList("help", "h", "?")).forHelp();
-        final OptionSpec<File> optionHome = parser.accepts("home", "Home directory for the bot").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
         parser.acceptsAll(Arrays.asList("debug", "d"), "Turn debug code on. (Could spam console)");
-        final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withRequiredArg().defaultsTo("JavaBot");
-        final OptionSpec<String> optionOwner = parser.acceptsAll(Arrays.asList("owner", "o"), "Sets the bots owner nickname.").withRequiredArg().defaultsTo("allout58");
 
-        final OptionSet options = parser.parse(args);
+        options = parser.parse(args);
 
         if (options.has("help") || options.has("h") || options.has("?"))
         {
@@ -71,9 +88,6 @@ public class JamBot
         }
 
         Config.homeDir = options.valueOf(optionHome);
-        Config.debugMode = options.has("debug") || options.has("d");
-        Config.botNick = options.valueOf(optionNick);
-        Config.owner = options.valueOf(optionOwner);
         return true;
     }
 

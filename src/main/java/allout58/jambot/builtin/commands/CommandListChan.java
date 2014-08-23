@@ -37,7 +37,7 @@ public class CommandListChan implements ICommand
                 m.add("Ops:");
                 for (IClient client : c.getOps())
                 {
-                    m.add(" @" + client.getNick() + "!" + client.getUser());
+                    m.add(" @" + client.getNick() + "!" + client.getUser() + "@" + client.getServerAddress());
                     nList.remove(client);
                 }
             }
@@ -46,7 +46,7 @@ public class CommandListChan implements ICommand
                 m.add("Voice:");
                 for (IClient client : c.getVoice())
                 {
-                    m.add(" +" + client.getNick());
+                    m.add(" +" + client.getNick() + "!" + client.getUser() + "@" + client.getServerAddress());
                     nList.remove(client);
                 }
             }
@@ -55,7 +55,7 @@ public class CommandListChan implements ICommand
                 m.add("Normal: ");
                 for (IClient client : nList)
                 {
-                    m.add(" " + client.getNick());
+                    m.add(" " + client.getNick() + "!" + client.getUser() + "@" + client.getServerAddress());
                 }
             }
         }
