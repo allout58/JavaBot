@@ -87,5 +87,11 @@ public class CmdChannel implements IChannel
 
     }
 
+    @Override
+    public void sendEmote(String message)
+    {
+        sendMessage("*" + message + "*");
+    }
+
 }
 

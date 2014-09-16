@@ -9,6 +9,7 @@ import allout58.jambot.builtin.commands.CommandListChan;
 import allout58.jambot.builtin.commands.CommandPart;
 import allout58.jambot.builtin.commands.CommandRestart;
 import allout58.jambot.builtin.commands.CommandWhois;
+import allout58.jambot.builtin.commands.ResponderBlame;
 import allout58.jambot.builtin.commands.ResponderGG;
 import allout58.jambot.builtin.servers.irc.IRCServer;
 import allout58.jambot.config.Config;
@@ -29,6 +30,7 @@ public class JamBot
 {
     public static final Logger log = LogManager.getLogger("JamBot");
 
+
     public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames" };
 
     public static IServer daServer;
@@ -40,11 +42,16 @@ public class JamBot
     private final OptionSpec<String> optionNick = parser.acceptsAll(Arrays.asList("nick", "n"), "Sets the bots nickname for servers that can recognize it.").withOptionalArg();
     private final OptionSpec<String> optionOwner = parser.acceptsAll(Arrays.asList("owner", "o"), "Sets the bots owner nickname.").withOptionalArg();
 
+    /**
+     * Initializes the bot.
+     * Starts and connects to the configured server(s)
+     *
+     * @param args The command-line arguments passed to the program.
+     */
     public void init(String[] args)
     {
         if (!parseOptions(args)) return;
         Config.init();
-        //logTest();
         parseOptions2();
 
         log.info("Config.debugMode: " + Config.debugMode);
@@ -113,6 +120,7 @@ public class JamBot
         API.registerResponder(new CommandWhois());
 
         API.registerResponder(new ResponderGG());
+        API.registerResponder(new ResponderBlame());
     }
 
 }

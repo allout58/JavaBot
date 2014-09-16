@@ -124,4 +124,10 @@ public class IRCChannel implements IChannel
     {
         writer.addToQueue("PART " + getName());
     }
+
+    @Override
+    public void sendEmote(String message)
+    {
+        sendMessage("\001ACTION " + message + "\001");
+    }
 }

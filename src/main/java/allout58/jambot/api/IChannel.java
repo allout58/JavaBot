@@ -25,6 +25,8 @@ public interface IChannel
 
     void sendNotice(String message);
 
+    void sendEmote(String message);
+
     void activate();
 
     void deactivate();
