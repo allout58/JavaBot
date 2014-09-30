@@ -39,6 +39,7 @@ public class CommandHelp implements ICommand
             message.add("Commands:");
             message.add(" ");
             message.add(String.format(format, "PermLvl", "CmdName", "Desc"));
+            message.add("--------------------------------");
             for (ICommand com : commands)
             {
                 message.add(String.format(format, com.getCommandLevel().name(), com.getName(), com.getDescription()));
