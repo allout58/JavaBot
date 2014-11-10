@@ -2,7 +2,7 @@ package allout58.jambot;
 
 import allout58.jambot.api.API;
 import allout58.jambot.api.IServer;
-import allout58.jambot.builtin.commands.CommandDie;
+/*import allout58.jambot.builtin.commands.CommandDie;
 import allout58.jambot.builtin.commands.CommandHelp;
 import allout58.jambot.builtin.commands.CommandJoin;
 import allout58.jambot.builtin.commands.CommandListChan;
@@ -11,8 +11,9 @@ import allout58.jambot.builtin.commands.CommandRestart;
 import allout58.jambot.builtin.commands.CommandWhois;
 import allout58.jambot.builtin.commands.ResponderBlame;
 import allout58.jambot.builtin.commands.ResponderGG;
-import allout58.jambot.builtin.servers.irc.IRCServer;
+import allout58.jambot.builtin.servers.irc.IRCServer;*/
 import allout58.jambot.config.Config;
+import allout58.jambot.loader.LoaderMain;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -33,7 +34,7 @@ public class JamBot
 
     public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames" };
 
-    public static IServer daServer;
+    //public static IServer daServer;
 
     private final OptionParser parser = new OptionParser();
     private OptionSet options;
@@ -59,10 +60,9 @@ public class JamBot
         log.info("Config.owner: " + Config.owner);
         log.info("Config.commandPrefix: " + Config.commandPrefix.name());
 
-        registerDefaultResponders();
-
-        daServer = new IRCServer("irc.esper.net:5555");
-        daServer.connect();
+        LoaderMain.getInstance().beginLoad();
+        //daServer = new IRCServer("irc.esper.net:5555");
+        //daServer.connect();
     }
 
     private void parseOptions2()
@@ -97,30 +97,4 @@ public class JamBot
         Config.homeDir = options.valueOf(optionHome);
         return true;
     }
-
-    private void logTest()
-    {
-        log.fatal("Ya screwed up pretty bad dude... GG");
-        log.error("Error error Will Robinson!");
-        log.warn("WARNING!!! Um, er, well, at least it's not an error");
-        log.info("Information Central!");
-        log.debug("Debug all the bots");
-        log.trace("Trace dat code up!");
-
-    }
-
-    private void registerDefaultResponders()
-    {
-        API.registerResponder(new CommandHelp());
-        API.registerResponder(new CommandRestart());
-        API.registerResponder(new CommandDie());
-        API.registerResponder(new CommandListChan());
-        API.registerResponder(new CommandJoin());
-        API.registerResponder(new CommandPart());
-        API.registerResponder(new CommandWhois());
-
-        API.registerResponder(new ResponderGG());
-        API.registerResponder(new ResponderBlame());
-    }
-
 }

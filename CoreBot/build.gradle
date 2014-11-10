@@ -16,6 +16,7 @@ buildscript {
 boolean fullbuild = true
 
 version = '1.0.0-a1'
+group = "allout58.jambot"
 
 if (System.getenv().DRONE_BUILD_NUMBER) {
     version += "-droneio" + System.getenv().DRONE_BUILD_NUMBER
@@ -28,7 +29,11 @@ repositories {
 
 task apiJar(type: Jar) {
     from(sourceSets.main.java) {
-        include "allout58/jambot/api/*"
+        include "allout58/jambot/api/**/*"
+    }
+
+    from(sourceSets.main.java) {
+        include "allotu58/jambot/util/**/*"
     }
     classifier = 'api'
 }
