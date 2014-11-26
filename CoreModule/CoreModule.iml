@@ -14,19 +14,21 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Gradle: net.sf.jopt-simple:jopt-simple:4.7-beta-1" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: org.apache.logging.log4j:log4j-api:2.0.1" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: org.apache.logging.log4j:log4j-core:2.0.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.11" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="module-library" exported="">
       <library name="Gradle: JamBot-1.0.0-a1">
         <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/JamBot-1.0.0-a1.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/JamBot-1.0.0-a1.jar!/" />
           <root url="jar://$MODULE_DIR$/libs/JamBot-1.0.0-a1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="Gradle: net.sf.jopt-simple:jopt-simple:4.7-beta-1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.apache.logging.log4j:log4j-api:2.0.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.apache.logging.log4j:log4j-core:2.0.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: junit:junit:4.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>

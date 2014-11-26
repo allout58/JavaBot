@@ -1,5 +1,6 @@
 package allout58.jambot.loader;
 
+import allout58.jambot.util.LogHelp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +42,21 @@ public class LoaderMain
         }
     }
 
+    public void startServers()
+    {
+        try
+        {
+            for (Module mod : modules)
+            {
+                mod.startServers();
+            }
+        }
+        catch (Exception e)
+        {
+            log.error(LogHelp.LOADING, "Error starting servers.", e);
+        }
+    }
+
     private void findModules() throws IOException
     {
         //Ensure that the directory exists.
@@ -79,20 +95,20 @@ public class LoaderMain
                     {
                         try
                         {
-                            log.info("Initializing module " + clz.toString());
+                            log.info(LogHelp.LOADING, "Initializing module " + clz.toString());
                             Module mod = (Module) clz.newInstance();
                             mod.init();
                             modules.add(mod);
                         }
                         catch (Exception e)
                         {
-                            log.error("Unable to load module " + clzName, e);
+                            log.error(LogHelp.LOADING, "Error loading module " + clzName, e);
                         }
                     }
                 }
                 catch (ClassNotFoundException e)
                 {
-                    log.error("Unable to find class", e);
+                    log.error(LogHelp.LOADING,  "Unable to find class", e);
                 }
             }
         }

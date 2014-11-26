@@ -61,6 +61,7 @@ public class JamBot
         log.info("Config.commandPrefix: " + Config.commandPrefix.name());
 
         LoaderMain.getInstance().beginLoad();
+        LoaderMain.getInstance().startServers();
         //daServer = new IRCServer("irc.esper.net:5555");
         //daServer.connect();
     }
