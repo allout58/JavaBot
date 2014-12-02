@@ -23,6 +23,11 @@ if (System.getenv().DRONE_BUILD_NUMBER) {
     fullbuild = false
 }
 
+if (System.getenv()['BUILD_NUMBER']) {
+    version += "-jenkins" + System.getenv()['BUILD_NUMBER'] 
+    fullbuild=false
+}
+
 repositories {
     mavenCentral()
 }
