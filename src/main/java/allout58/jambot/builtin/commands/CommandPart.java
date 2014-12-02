@@ -15,7 +15,7 @@ public class CommandPart implements ICommand
     {
         if (sender.isOp(channel))
         {
-            channel.getServer().partChannel(args[0]);
+            channel.getServer().partChannel(channel.getName());
         }
     }
 

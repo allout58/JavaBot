@@ -20,6 +20,8 @@ public class CommandRestart implements ICommand
             {
                 channel.getServer().sendToAllChannels("Reconnecting... Goodbye!");
                 channel.getServer().disconnect();
+                //Reload Config for good measure
+                sender.getServer().getConfig().readConfig();
                 Thread.sleep(10000);
                 channel.getServer().connect();
             }
