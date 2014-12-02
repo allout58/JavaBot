@@ -2,7 +2,6 @@ package allout58.jambot.builtin.commands;
 
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IMatcher;
-import allout58.jambot.config.Config;
 
 /**
  * Created by James Hollowell on 9/15/2014.
@@ -25,7 +24,7 @@ public class ResponderBlame implements IMatcher
     @Override
     public void match(IChannel sender, String msg)
     {
-        if (msg.toLowerCase().contains("#blame" + Config.botNick.toLowerCase()))
+        if (msg.toLowerCase().contains("#blame" + ((String) sender.getServer().getConfig().getValue("botNick")).toLowerCase()))
         {
             sender.sendEmote("dies a little inside");
         }

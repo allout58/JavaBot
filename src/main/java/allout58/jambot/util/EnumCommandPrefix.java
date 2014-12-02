@@ -13,8 +13,6 @@ public enum EnumCommandPrefix
     DOT("."),
     SLASH("/");
 
-    private static final Map<String, EnumCommandPrefix> nameMap = new HashMap<String, EnumCommandPrefix>();
-
     private String pre;
 
     private EnumCommandPrefix(String prefix)
@@ -27,17 +25,9 @@ public enum EnumCommandPrefix
         return pre;
     }
 
-    public static EnumCommandPrefix getPrefixFromName(String name)
+    @Override
+    public String toString()
     {
-        return nameMap.get(name.toLowerCase());
+        return name();
     }
-
-    static
-    {
-        EnumCommandPrefix[] val = values();
-        for (EnumCommandPrefix pre : val)
-        {
-            nameMap.put(pre.name().toLowerCase(), pre);
-        }
     }
-}

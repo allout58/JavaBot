@@ -2,6 +2,7 @@ package allout58.jambot.builtin.servers.cmd;
 
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IServer;
+import allout58.jambot.config.Config;
 import allout58.jambot.util.CallbackReader;
 import allout58.jambot.util.CommandParser;
 import allout58.jambot.util.QueuedWriter;
@@ -126,5 +127,17 @@ public class CmdServer implements IServer, CallbackReader.IReaderCallback
         {
             channel.sendMessage(message);
         }
+    }
+
+    @Override
+    public Config getConfig()
+    {
+        return null;
+    }
+
+    @Override
+    public QueuedWriter getWriter()
+    {
+        return writer;
     }
 }

@@ -1,5 +1,6 @@
 package allout58.jambot.api;
 
+import allout58.jambot.config.Config;
 import allout58.jambot.util.QueuedWriter;
 
 /**

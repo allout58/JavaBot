@@ -1,19 +1,9 @@
 package allout58.jambot;
 
-import allout58.jambot.api.API;
-import allout58.jambot.api.IServer;
-/*import allout58.jambot.builtin.commands.CommandDie;
-import allout58.jambot.builtin.commands.CommandHelp;
-import allout58.jambot.builtin.commands.CommandJoin;
-import allout58.jambot.builtin.commands.CommandListChan;
-import allout58.jambot.builtin.commands.CommandPart;
-import allout58.jambot.builtin.commands.CommandRestart;
-import allout58.jambot.builtin.commands.CommandWhois;
-import allout58.jambot.builtin.commands.ResponderBlame;
-import allout58.jambot.builtin.commands.ResponderGG;
-import allout58.jambot.builtin.servers.irc.IRCServer;*/
+import allout58.jambot.config.CmdOptions;
 import allout58.jambot.config.Config;
 import allout58.jambot.loader.LoaderMain;
+import allout58.jambot.util.EnumCommandPrefix;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -30,11 +20,8 @@ import java.util.Arrays;
 public class JamBot
 {
     public static final Logger log = LogManager.getLogger("JamBot");
-
-
-    public static final String[] channels = new String[] { "#ChowTime", "#turbulantgames" };
-
-    //public static IServer daServer;
+    public static Config config;
+    public static final String[] channels = new String[] { "#ChowTime" };
 
     private final OptionParser parser = new OptionParser();
     private OptionSet options;
@@ -52,27 +39,31 @@ public class JamBot
     public void init(String[] args)
     {
         if (!parseOptions(args)) return;
-        Config.init();
         parseOptions2();
+        config = new Config("bot");
+        config.readConfig();
+        config.dumpConfig();
 
-        log.info("Config.debugMode: " + Config.debugMode);
-        log.info("Config.botNick: " + Config.botNick);
-        log.info("Config.owner: " + Config.owner);
-        log.info("Config.commandPrefix: " + Config.commandPrefix.name());
+        log.info("Config.debugMode: " + CmdOptions.debugMode);
+        log.info("Config.owner: " + config.getValue("botOwner", "allout58"));
+        log.info("Config.commandPrefix: " + config.getValue("prefix", EnumCommandPrefix.BANG));
+
+        config.dumpConfig();
+
+        if (config.hasChanged())
+            config.save();
 
         LoaderMain.getInstance().beginLoad();
         LoaderMain.getInstance().startServers();
-        //daServer = new IRCServer("irc.esper.net:5555");
-        //daServer.connect();
     }
 
     private void parseOptions2()
     {
-        Config.debugMode = options.has("debug") || options.has("d");
+        CmdOptions.debugMode = options.has("debug") || options.has("d");
         if (options.hasArgument(optionNick))
-            Config.botNick = options.valueOf(optionNick);
+            config.setValue("botNick", options.valueOf(optionNick));
         if (options.hasArgument(optionOwner))
-            Config.owner = options.valueOf(optionOwner);
+            config.setValue("botOwner", options.valueOf(optionOwner));
     }
 
     private boolean parseOptions(String[] args)
@@ -95,7 +86,7 @@ public class JamBot
             }
         }
 
-        Config.homeDir = options.valueOf(optionHome);
+        CmdOptions.homeDir = options.valueOf(optionHome);
         return true;
     }
 }

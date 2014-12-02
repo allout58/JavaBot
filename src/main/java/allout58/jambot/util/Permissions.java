@@ -1,8 +1,7 @@
 package allout58.jambot.util;
 
-import allout58.jambot.api.IChannel;
+import allout58.jambot.JamBot;
 import allout58.jambot.api.IClient;
-import allout58.jambot.config.Config;
 
 /**
  * Created by James Hollowell on 8/22/2014.
@@ -26,7 +25,7 @@ public class Permissions
 
     public static boolean isOwner(IClient client)
     {
-        return client.getUser().equals(Config.owner);
+        return client.getUser().equals(JamBot.config.getValue("botOwner"))|| client.getNick().equals(JamBot.config.getValue("botOwner"));
     }
 
     public static boolean canDo(EnumCommandPermission tryPerm, EnumCommandPermission requiredPerm)

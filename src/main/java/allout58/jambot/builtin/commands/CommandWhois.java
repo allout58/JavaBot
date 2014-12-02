@@ -13,7 +13,9 @@ public class CommandWhois implements ICommand
     @Override
     public void processCommand(IClient sender, IChannel channel, String[] args)
     {
-        channel.getWriter().addToQueue("WHOIS " + args[0]);
+        if (args.length != 1)
+            sender.sendNotice(sender.getNick() + ", the usage is `whois [nickname]`");
+        sender.getServer().getWriter().addToQueue("WHOIS " + args[0]);
     }
 
     @Override

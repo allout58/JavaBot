@@ -1,6 +1,6 @@
 package allout58.jambot.util;
 
-import allout58.jambot.config.Config;
+import allout58.jambot.config.CmdOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +57,6 @@ public class QueuedWriter implements Runnable
         {
             isRunning = false;
             daThread.interrupt();
-            //daThread.join(1000);
         }
         catch (Exception e)
         {
@@ -87,7 +86,7 @@ public class QueuedWriter implements Runnable
                     {
                         String msg = queue.removeFirst();
                         writer.write(msg);
-                        if (Config.debugMode)
+                        if (CmdOptions.debugMode)
                         {
                             log.info("Output msg: " + msg);
                         }

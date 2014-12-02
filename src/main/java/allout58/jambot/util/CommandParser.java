@@ -1,12 +1,12 @@
 package allout58.jambot.util;
 
+import allout58.jambot.JamBot;
 import allout58.jambot.api.API;
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.ICommand;
 import allout58.jambot.api.IMatcher;
 import allout58.jambot.api.IResponder;
-import allout58.jambot.config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,9 +23,10 @@ public class CommandParser
 
     public static boolean tryCommand(IClient sender, IChannel chan, String message)
     {
-        if (message.startsWith(Config.commandPrefix.getPrefix()))
+        EnumCommandPrefix prefix = (EnumCommandPrefix) JamBot.config.getValue("prefix");
+        if (message.startsWith(prefix.getPrefix()))
         {
-            String cmdName = message.substring(Config.commandPrefix.getPrefix().length());
+            String cmdName = message.substring(prefix.getPrefix().length());
             if (cmdName.contains(" "))
                 cmdName = cmdName.substring(0, cmdName.indexOf(" "));
             for (IResponder r : API.responders)
@@ -35,7 +36,7 @@ public class CommandParser
                 {
                     if (Permissions.canDo(sender.getPermLevel(chan), ((ICommand) r).getCommandLevel()))
                     {
-                        String woComName = message.substring(Config.commandPrefix.getPrefix().length() + cmdName.length());
+                        String woComName = message.substring(prefix.getPrefix().length() + cmdName.length());
                         List<String> a1 = Arrays.asList(woComName.split(" "));
                         ArrayList<String> a2 = new ArrayList<String>(a1);
                         if ("".equals(a2.get(0))) a2.remove(0);

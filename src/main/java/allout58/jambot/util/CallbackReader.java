@@ -103,7 +103,14 @@ public class CallbackReader implements Runnable
                 {
                     for (IReaderCallback callback : callbacks)
                     {
-                        callback.readerCallback(line);
+                        try
+                        {
+                            callback.readerCallback(line);
+                        }
+                        catch (Exception e)
+                        {
+                            log.error("Error processing reader callback", e);
+                        }
                     }
                 }
             }
