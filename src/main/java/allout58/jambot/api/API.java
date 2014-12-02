@@ -27,8 +27,8 @@ public class API
     /**
      * Registers a server instance with the API manager.
      *
-     * @param commonName    A name to reference the server object by.
-     * @param serverObj     The server object being registered.
+     * @param commonName A name to reference the server object by.
+     * @param serverObj  The server object being registered.
      */
     @SuppressWarnings("unused")
     public static void registerServer(String commonName, IServer serverObj)

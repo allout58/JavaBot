@@ -25,7 +25,7 @@ public class Permissions
 
     public static boolean isOwner(IClient client)
     {
-        return client.getUser().equals(JamBot.config.getValue("botOwner"))|| client.getNick().equals(JamBot.config.getValue("botOwner"));
+        return client.getUser().equals(JamBot.config.getValue("botOwner")) || client.getNick().equals(JamBot.config.getValue("botOwner"));
     }
 
     public static boolean canDo(EnumCommandPermission tryPerm, EnumCommandPermission requiredPerm)

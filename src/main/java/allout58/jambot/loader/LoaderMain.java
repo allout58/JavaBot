@@ -69,8 +69,8 @@ public class LoaderMain
         //Ensure that the directory exists.
         if (!modulesLoc.exists())
             //If not, create a new module directory.
-            modulesLoc.mkdir();
-
+            if (!modulesLoc.mkdir())
+                log.error("Error creating modules folder");
         //Find all the .jar files
         List<URL> urls = new ArrayList<URL>();
         List<JarFile> jars = new ArrayList<JarFile>();

@@ -35,7 +35,10 @@ public class QueuedWriter implements Runnable
 
     public void setWriter(BufferedWriter writer)
     {
-        this.writer = writer;
+        synchronized (this)
+        {
+            this.writer = writer;
+        }
     }
 
     public void start()

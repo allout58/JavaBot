@@ -1,8 +1,5 @@
 package allout58.jambot.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by James Hollowell on 8/18/2014.
  */
@@ -30,4 +27,4 @@ public enum EnumCommandPrefix
     {
         return name();
     }
-    }
+}

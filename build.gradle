@@ -62,6 +62,6 @@ launch4j {
     mainClassName = "allout58.jambot.Start"
     headerType = "console"
     cmdLine = true
-    logger.info("lib/"+project.name+"-"+project.version+".jar")
-    jar = "lib/"+project.name+"-"+project.version+".jar"
+    logger.info("lib/" + project.name + "-" + project.version + ".jar")
+    jar = "lib/" + project.name + "-" + project.version + ".jar"
 }

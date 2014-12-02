@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Created by James Hollowell on 11/27/2014.
@@ -58,7 +59,8 @@ public class Config
         {
             File folder = new File(CmdOptions.homeDir.getCanonicalPath() + "/config/");
             if (!folder.exists())
-                folder.mkdir();
+                if (!folder.mkdir())
+                    log.error("Error making config directory");
             setFile(new File(folder.getCanonicalPath() + "/" + moduleName + ".cfg"));
         }
         catch (IOException e)
@@ -83,7 +85,8 @@ public class Config
         {
             cfgFile = file;
             if (!cfgFile.exists())
-                cfgFile.createNewFile();
+                if (!cfgFile.createNewFile())
+                    log.error("Error creating config file");
         }
         catch (IOException e)
         {
@@ -125,6 +128,7 @@ public class Config
                 configs.put(first, p);
                 comment = "";
             }
+            reader.close();
         }
         catch (IOException e)
         {
@@ -182,9 +186,9 @@ public class Config
             try
             {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(cfgFile));
-                for (String key : configs.keySet())
+                for (Map.Entry<String, Property> entry : configs.entrySet())
                 {
-                    Property prop = configs.get(key);
+                    Property prop = entry.getValue();
                     if (!"".equals(prop.comment))
                         writer.write(prop.comment);
                     Object o = prop.value;
@@ -196,10 +200,11 @@ public class Config
                     }
                     if (out == null) out = (String) o;
 
-                    writer.write(key + ": " + out);
+                    writer.write(entry.getKey() + ": " + out);
                     writer.newLine();
                 }
                 writer.flush();
+                writer.close();
             }
             catch (IOException e)
             {
@@ -338,9 +343,9 @@ public class Config
             {
                 if (val.startsWith("[") && val.endsWith("]"))
                 {
-                    val = val.substring(1);
-                    val = val.substring(0, val.length() - 1);
-                    return val.split(CmdOptions.arrayDelimeter);
+                    String v = val.substring(1);
+                    v = v.substring(0, val.length() - 1);
+                    return v.split(CmdOptions.arrayDelimeter);
                 }
                 return null;
             }

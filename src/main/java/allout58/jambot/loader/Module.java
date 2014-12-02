@@ -7,5 +7,6 @@ package allout58.jambot.loader;
 public interface Module
 {
     void init();
+
     void startServers();
 }

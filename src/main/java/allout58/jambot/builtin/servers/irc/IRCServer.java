@@ -229,7 +229,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 log.info("Whois recieved: " + nick + "!" + user + "@" + server);
                 //Map used to be nick -> client; this will convert it to the more appropriate uname -> client
                 //IClient c = renameClient(nick, user);
-                IClient c= getOrCreateClient(nick);
+                IClient c = getOrCreateClient(nick);
                 c.setFullName(nick + "!" + user + "@" + server);
                 return false;
             case 353:
