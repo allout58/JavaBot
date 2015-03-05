@@ -33,12 +33,9 @@ public class QueuedWriter implements Runnable
         this.name = name;
     }
 
-    public void setWriter(BufferedWriter writer)
+    public synchronized void setWriter(BufferedWriter writer)
     {
-        synchronized (this)
-        {
-            this.writer = writer;
-        }
+        this.writer = writer;
     }
 
     public void start()
@@ -67,13 +64,10 @@ public class QueuedWriter implements Runnable
         }
     }
 
-    public void addToQueue(String message)
+    public synchronized void addToQueue(String message)
     {
         assert writer != null; //why add to queue if not already started...
-        synchronized (this)
-        {
-            queue.addLast(message);
-        }
+        queue.addLast(message);
     }
 
     @Override
@@ -94,8 +88,15 @@ public class QueuedWriter implements Runnable
                             log.info("Output msg: " + msg);
                         }
                         writer.write(CARRIAGE_RETURN);
+                        writer.flush();
+                        try
+                        {
+                            Thread.sleep(1000);
+                        }
+                        catch (InterruptedException ignored)
+                        {
+                        }
                     }
-                    writer.flush();
                 }
             }
         }

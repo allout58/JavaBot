@@ -99,9 +99,9 @@ public class CallbackReader implements Runnable
             {
                 if (callbacks.size() < 1)
                     log.warn("No callback objects defined; messages being received and not processed");
-                synchronized (this)
+                for (IReaderCallback callback : callbacks)
                 {
-                    for (IReaderCallback callback : callbacks)
+                    synchronized (this)
                     {
                         try
                         {

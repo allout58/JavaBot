@@ -344,7 +344,8 @@ public class Config
                 if (val.startsWith("[") && val.endsWith("]"))
                 {
                     String v = val.substring(1);
-                    v = v.substring(0, val.length() - 1);
+                    v = v.substring(0, val.length() - 2);
+                    //System.out.println(v);
                     return v.split(CmdOptions.arrayDelimeter);
                 }
                 return null;
