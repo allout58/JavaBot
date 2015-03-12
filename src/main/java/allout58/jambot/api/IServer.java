@@ -1,6 +1,6 @@
 package allout58.jambot.api;
 
-import allout58.jambot.config.Config;
+import allout58.jambot.api.config.Config;
 import allout58.jambot.util.QueuedWriter;
 
 /**
@@ -35,4 +35,6 @@ public interface IServer
     void partChannel(String name);
 
     void sendToAllChannels(String message);
+
+    IClient getClient(String name);
 }

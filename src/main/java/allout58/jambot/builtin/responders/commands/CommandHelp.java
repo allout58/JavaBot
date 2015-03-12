@@ -1,4 +1,4 @@
-package allout58.jambot.builtin.commands;
+package allout58.jambot.builtin.responders.commands;
 
 import allout58.jambot.api.API;
 import allout58.jambot.api.IChannel;
@@ -58,6 +58,10 @@ public class CommandHelp implements ICommand
 
         if (sender.canReceiveNotice())
         {
+            if (chan != null)
+            {
+                chan.sendMessage(sender.getNick() + ": Sending you a notice now!");
+            }
             for (String m : message)
             {
                 sender.sendNotice(m);
@@ -65,6 +69,10 @@ public class CommandHelp implements ICommand
         }
         else if (sender.canReceivePM())
         {
+            if (chan != null)
+            {
+                chan.sendMessage(sender.getNick() + ": Sending you a PM now!");
+            }
             for (String m : message)
             {
                 sender.sendPM(m);

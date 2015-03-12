@@ -1,5 +1,6 @@
-package allout58.jambot.config;
+package allout58.jambot.api.config;
 
+import allout58.jambot.config.DefaultOptions;
 import allout58.jambot.util.EnumCommandPrefix;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,50 +15,23 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by James Hollowell on 11/27/2014.
  */
 public class Config
 {
-    interface Parser
-    {
-        Object parse(String val);
-
-        String encode(Object val);
-    }
-
-    private class Property
-    {
-        public String comment = "";
-        public Object value;
-
-        Property(String comment, Object value)
-        {
-            this.comment = comment;
-            this.value = value;
-        }
-
-        Property(Object value)
-        {
-            this.value = value;
-        }
-
-    }
-
-    private static final HashSet<Parser> parsers = new HashSet<Parser>();
+    private static final Set<Parser> parsers = new HashSet<>();
     private static final Logger log = LogManager.getLogger("ModuleLoader");
-
-    private File cfgFile;
-
-    private HashMap<String, Property> configs = new HashMap<String, Property>();
-    private boolean hasChanged = false;
-
+    protected File cfgFile;
+    protected HashMap<String, Property> configs = new HashMap<>();
+    protected boolean hasChanged = false;
     public Config(String moduleName)
     {
         try
         {
-            File folder = new File(CmdOptions.homeDir.getCanonicalPath() + "/config/");
+            File folder = new File(DefaultOptions.homeDir.getCanonicalPath() + "/config/");
             if (!folder.exists())
                 if (!folder.mkdir())
                     log.error("Error making config directory");
@@ -124,7 +98,7 @@ public class Config
                 //If none of the parsers work, make it a string
                 if (parseSecond == null) parseSecond = second;
 
-                Property p = ("".equals(comment)) ? new Property(parseSecond) : new Property(comment, parseSecond);
+                Property p = new Property(comment, parseSecond);
                 configs.put(first, p);
                 comment = "";
             }
@@ -142,6 +116,7 @@ public class Config
      * @param key Key name to find the value of.
      * @return The found value.
      */
+    @Deprecated
     public Object getValue(String key)
     {
         if (configs.get(key) == null) return null;
@@ -222,7 +197,7 @@ public class Config
     }
 
     /**
-     * Dumps the current state of this config objet to stderr.
+     * Dumps the current state of this config object to stderr.
      */
     public void dumpConfig()
     {
@@ -231,11 +206,10 @@ public class Config
             System.err.println(key + "->" + configs.get(key).value + ":" + configs.get(key).value.getClass() + "#" + configs.get(key).comment);
         }
     }
-
     static
     {
         //Integer Parser
-        addParser(new Parser()
+        addParser(new Parser(1, "integer")
         {
             @Override
             public Object parse(String val)
@@ -262,7 +236,7 @@ public class Config
         });
 
         //Double Parser
-        addParser(new Parser()
+        addParser(new Parser(1, "double")
         {
             @Override
             public Object parse(String val)
@@ -289,12 +263,11 @@ public class Config
         });
 
         //Boolean Parser
-        addParser(new Parser()
+        addParser(new Parser(1, "boolean")
         {
             @Override
             public Object parse(String val)
             {
-                Boolean b;
                 if ("true".equalsIgnoreCase(val)) return true;
                 if ("false".equalsIgnoreCase(val)) return false;
                 return null;
@@ -312,7 +285,7 @@ public class Config
         });
 
         //EnumCommandPrefix Parser
-        addParser(new Parser()
+        addParser(new Parser(1, "command prefix")
         {
             @Override
             public Object parse(String val)
@@ -336,7 +309,8 @@ public class Config
             }
         });
 
-        addParser(new Parser()
+        //String Array Parser
+        addParser(new Parser(0, "string array")
         {
             @Override
             public Object parse(String val)
@@ -346,7 +320,7 @@ public class Config
                     String v = val.substring(1);
                     v = v.substring(0, val.length() - 2);
                     //System.out.println(v);
-                    return v.split(CmdOptions.arrayDelimeter);
+                    return v.split(DefaultOptions.arrayDelimeter);
                 }
                 return null;
             }
@@ -358,12 +332,30 @@ public class Config
                 {
                     String out = "[";
                     for (String s : (String[]) val)
-                        out += s + CmdOptions.arrayDelimeter;
+                        out += s + DefaultOptions.arrayDelimeter;
                     out += "]";
                     return out;
                 }
                 return null;
             }
         });
+    }
+
+    protected class Property
+    {
+        public String comment = "";
+        public Object value;
+
+        Property(String comment, Object value)
+        {
+            this.comment = comment;
+            this.value = value;
+        }
+
+        Property(Object value)
+        {
+            this.value = value;
+        }
+
     }
 }

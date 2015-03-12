@@ -1,4 +1,4 @@
-package allout58.jambot.builtin.commands;
+package allout58.jambot.builtin.responders.commands;
 
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
@@ -13,8 +13,8 @@ public class CommandDie implements ICommand
     @Override
     public void processCommand(IClient sender, IChannel chan, String[] args)
     {
-        chan.getServer().sendToAllChannels("Tis only a flesh wound!");
-        chan.getServer().disconnect();
+        sender.getServer().sendToAllChannels("Tis only a flesh wound!");
+        sender.getServer().disconnect();
     }
 
     @Override

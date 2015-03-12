@@ -13,25 +13,13 @@ import java.util.List;
  */
 public class CallbackReader implements Runnable
 {
-    public interface IReaderCallback
-    {
-        /**
-         * Callback for @see{allout58.jambot.util.CallbackReader}
-         *
-         * @param message Message recieved on the reader
-         */
-        void readerCallback(String message);
-    }
-
     private static final String CARRIAGE_RETURN = "\r\n";
-    private Thread daThread;
     private final Logger log;
     private final String name;
-
+    private final List<IReaderCallback> callbacks = new ArrayList<IReaderCallback>();
+    private Thread daThread;
     private boolean isRunning = false;
     private BufferedReader reader;
-
-    private final List<IReaderCallback> callbacks = new ArrayList<IReaderCallback>();
 
     public CallbackReader()
     {
@@ -76,10 +64,8 @@ public class CallbackReader implements Runnable
         {
             synchronized (callbacks)
             {
-                callbacks.clear();
                 isRunning = false;
                 daThread.join(1000);
-                //daThread.interrupt();
             }
 
         }
@@ -114,10 +100,21 @@ public class CallbackReader implements Runnable
                     }
                 }
             }
+            callbacks.clear();
         }
         catch (IOException e)
         {
             log.error("Error in callback reader:", e);
         }
+    }
+
+    public interface IReaderCallback
+    {
+        /**
+         * Callback for @see{allout58.jambot.util.CallbackReader}
+         *
+         * @param message Message recieved on the reader
+         */
+        void readerCallback(String message);
     }
 }

@@ -1,6 +1,5 @@
 package allout58.jambot.util;
 
-import allout58.jambot.config.CmdOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,19 +82,16 @@ public class QueuedWriter implements Runnable
                     {
                         String msg = queue.removeFirst();
                         writer.write(msg);
-                        if (CmdOptions.debugMode)
-                        {
-                            log.info("Output msg: " + msg);
-                        }
+                        log.debug("Output msg: " + msg);
                         writer.write(CARRIAGE_RETURN);
                         writer.flush();
-                        try
-                        {
-                            Thread.sleep(1000);
-                        }
-                        catch (InterruptedException ignored)
-                        {
-                        }
+                        //                        try
+                        //                        {
+                        //                            Thread.sleep(1000);
+                        //                        }
+                        //                        catch (InterruptedException ignored)
+                        //                        {
+                        //                        }
                     }
                 }
             }
