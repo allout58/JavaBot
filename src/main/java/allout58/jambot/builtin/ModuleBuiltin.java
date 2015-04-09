@@ -1,18 +1,18 @@
 package allout58.jambot.builtin;
 
 import allout58.jambot.api.API;
-import allout58.jambot.builtin.commands.CommandBug;
-import allout58.jambot.builtin.commands.CommandDie;
-import allout58.jambot.builtin.commands.CommandHelp;
-import allout58.jambot.builtin.commands.CommandJoin;
-import allout58.jambot.builtin.commands.CommandListChan;
-import allout58.jambot.builtin.commands.CommandPart;
-import allout58.jambot.builtin.commands.CommandRestart;
-import allout58.jambot.builtin.commands.CommandWhois;
-import allout58.jambot.builtin.commands.ResponderBlame;
-import allout58.jambot.builtin.commands.ResponderGG;
+import allout58.jambot.api.config.Config;
+import allout58.jambot.builtin.responders.commands.CommandBug;
+import allout58.jambot.builtin.responders.commands.CommandDie;
+import allout58.jambot.builtin.responders.commands.CommandHelp;
+import allout58.jambot.builtin.responders.commands.CommandJoin;
+import allout58.jambot.builtin.responders.commands.CommandListChan;
+import allout58.jambot.builtin.responders.commands.CommandPart;
+import allout58.jambot.builtin.responders.commands.CommandRestart;
+import allout58.jambot.builtin.responders.commands.CommandWhois;
+import allout58.jambot.builtin.responders.matchers.MatcherBlame;
+import allout58.jambot.builtin.responders.matchers.MatcherGG;
 import allout58.jambot.builtin.servers.irc.IRCServer;
-import allout58.jambot.config.Config;
 import allout58.jambot.loader.Module;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,8 +39,8 @@ public class ModuleBuiltin implements Module
         API.registerResponder(new CommandWhois());
         API.registerResponder(new CommandBug());
 
-        API.registerResponder(new ResponderGG());
-        API.registerResponder(new ResponderBlame());
+        API.registerResponder(new MatcherGG());
+        API.registerResponder(new MatcherBlame());
 
         log.info("Core Module Initialized!");
     }

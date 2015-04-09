@@ -1,4 +1,4 @@
-package allout58.jambot.builtin.commands;
+package allout58.jambot.builtin.responders.matchers;
 
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IMatcher;
@@ -6,7 +6,7 @@ import allout58.jambot.api.IMatcher;
 /**
  * Created by James Hollowell on 8/19/2014.
  */
-public class ResponderGG implements IMatcher
+public class MatcherGG implements IMatcher
 {
     @Override
     public String getName()

@@ -36,13 +36,15 @@ public class LoaderMain
     {
         try
         {
-            log.info(LogHelp.LOADING, "Loading modules");
+            log.info(LogHelp.LOADING, "Loading external modules");
             findExternalModules();
+            log.info(LogHelp.LOADING, "Done loading external modules");
 
             log.info(LogHelp.LOADING, "Loading builtin modules");
             Module builtin = new ModuleBuiltin();
             builtin.init();
             modules.add(builtin);
+            log.info(LogHelp.LOADING, "Done loading builtin modules");
         }
         catch (IOException ignored)
         {

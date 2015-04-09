@@ -1,4 +1,4 @@
-package allout58.jambot.builtin.commands;
+package allout58.jambot.builtin.responders.commands;
 
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;

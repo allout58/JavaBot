@@ -35,4 +35,20 @@ public class API
     {
         servers.put(commonName, serverObj);
     }
+
+    public static void dumpServers()
+    {
+        for (Map.Entry<String, IServer> serverEntry : servers.entrySet())
+        {
+            System.err.println(serverEntry.getKey() + "=>" + serverEntry.getValue());
+        }
+    }
+
+    public static void dumpResponders()
+    {
+        for (IResponder serverEntry : responders)
+        {
+            System.err.println(serverEntry);
+        }
+    }
 }

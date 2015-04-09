@@ -58,14 +58,6 @@ public class IRCChannel implements IChannel
         return clients.toArray(new IClient[clients.size()]);
     }
 
-    public IClient getClient(String name)
-    {
-        for (IClient c : getAllClients())
-        {
-            if (c.getUser().equals(name)) return c;
-        }
-        return null;
-    }
 
     public void addClient(IRCClient client)
     {
@@ -90,15 +82,15 @@ public class IRCChannel implements IChannel
     }
 
     @Override
-    public void setWriter(QueuedWriter writer)
-    {
-        this.writer = writer;
-    }
-
-    @Override
     public QueuedWriter getWriter()
     {
         return writer;
+    }
+
+    @Override
+    public void setWriter(QueuedWriter writer)
+    {
+        this.writer = writer;
     }
 
     @Override

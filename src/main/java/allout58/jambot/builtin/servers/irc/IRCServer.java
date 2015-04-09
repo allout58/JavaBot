@@ -4,8 +4,8 @@ import allout58.jambot.JamBot;
 import allout58.jambot.api.IChannel;
 import allout58.jambot.api.IClient;
 import allout58.jambot.api.IServer;
-import allout58.jambot.config.CmdOptions;
-import allout58.jambot.config.Config;
+import allout58.jambot.api.config.Config;
+import allout58.jambot.config.DefaultOptions;
 import allout58.jambot.util.CallbackReader;
 import allout58.jambot.util.CommandParser;
 import allout58.jambot.util.InetHelper;
@@ -27,29 +27,22 @@ import java.util.Map;
  */
 public class IRCServer implements IServer, CallbackReader.IReaderCallback
 {
-    private Config config;
-    private Logger log = LogManager.getLogger("IRCServer");
-
     private final Map<String, IRCChannel> channels = new HashMap<String, IRCChannel>();
     private final Map<String, IRCClient> clients = new HashMap<String, IRCClient>();
-
+    private final String host;
+    private final int port;
+    private Config config;
+    private Logger log = LogManager.getLogger("IRCServer");
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
     private QueuedWriter writer = new QueuedWriter("IRCServerWriter");
     private CallbackReader reader = new CallbackReader("IRCServerReader");
-
-    private final String host;
-    private final int port;
-    private final IRCChannel defaultChannel;
-
     private boolean isConnected = false;
 
     public IRCServer(String address, Config conf)
     {
         host = InetHelper.getHost(address);
         port = InetHelper.getPort(address);
-        defaultChannel = new IRCChannel(host, this);
-        defaultChannel.setWriter(writer);
         config = conf;
     }
 
@@ -149,12 +142,12 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             writer.addToQueue("PONG " + message.substring(6));
             return;
         }
-        IRCMessage msg = new IRCMessage(message);
+        IRCMessage msg = new IRCMessage(message, this);
         IChannel c = getChannel(msg.getArgs()[0]);
         tryStringCommand(msg);
         if (!tryNumericCommand(msg))
         {
-            if (!CommandParser.tryCommand(getOrCreateClient(msg.getSender()), c, msg.getMessage().substring(msg.getMessage().indexOf(":") + 1)))
+            if (!CommandParser.tryCommand(msg.getSender(), c, msg.getMessage().substring(msg.getMessage().indexOf(":") + 1)))
             {
                 log.info("IRC Regular message: " + message);
             }
@@ -175,7 +168,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         IRCChannel channel = new IRCChannel(name, this);
         channel.setWriter(this.writer);
         channel.activate();
-        if (CmdOptions.debugMode)
+        if (DefaultOptions.debugMode)
             channel.sendMessage("Hi there!");
         channels.put(name.toLowerCase(), channel);
         return channel;
@@ -202,6 +195,12 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
     }
 
     @Override
+    public IClient getClient(String name)
+    {
+        return getOrCreateClient(name);
+    }
+
+    @Override
     public Config getConfig()
     {
         return config;
@@ -222,6 +221,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
             case -1:
                 return false;
             case 311:
+                //Whois reply
                 String[] arg = msg.getArgs();
                 String nick = arg[1];
                 String user = arg[2];
@@ -233,6 +233,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 c.setFullName(nick + "!" + user + "@" + server);
                 return false;
             case 353:
+                //List users in a channel
                 String message = msg.getMessage();
                 if (message.indexOf(":") == 0) message = message.substring(1);
                 String[] args = message.split(" ");
@@ -250,6 +251,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 }
                 return true;
             case 376:
+                //End of MOTD. We are connected people!
                 isConnected = true;
                 String[] chans = (String[]) config.getValue(host, new String[] { "#JamBot" });
                 for (String name : chans)
@@ -273,10 +275,10 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
                 IChannel c = getChannel(msg.getArgs()[0]);
                 CommandParser.doMatchers(c, msg.getMessage());
             }
-            else
-            {
-                getOrCreateClient(msg.getSender()).sendPM("You talk only to meh? You got somtin to hide??");
-            }
+            //            else
+            //            {
+            //                msg.getSender().sendPM("You talk only to meh? You got somtin to hide??");
+            //            }
         }
         else if ("NICK".equals(command))
         {
@@ -284,8 +286,8 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         }
         else if ("JOIN".equals(command))
         {
-            IRCClient c = getOrCreateClient(msg.getSender());
-            if (JamBot.config.getValue("botNick").equals(c.getNick()))
+            IRCClient c = (IRCClient) msg.getSender();
+            if (JamBot.config.getValue("botNick", DefaultOptions.botNick).equals(c.getNick()))
                 return;
             IRCChannel chan = getChannel(msg.getArgs()[0]);
             c.addChannel(chan);
@@ -293,8 +295,8 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         }
         else if ("PART".equals(command))
         {
-            IRCClient c = getOrCreateClient(msg.getSender());
-            if (JamBot.config.getValue("botNick").equals(c.getNick()))
+            IRCClient c = (IRCClient) msg.getSender();
+            if (JamBot.config.getValue("botNick", DefaultOptions.botNick).equals(c.getNick()))
                 return;
             IRCChannel chan = getChannel(msg.getArgs()[0]);
             c.removeChannel(chan);
@@ -302,7 +304,7 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         }
         else if ("QUIT".equals(command))
         {
-            IRCClient c = getOrCreateClient(msg.getSender());
+            IRCClient c = (IRCClient) msg.getSender();
             for (IRCChannel chan : channels.values())
             {
                 chan.removeClient(c);
@@ -338,12 +340,10 @@ public class IRCServer implements IServer, CallbackReader.IReaderCallback
         return c;
     }
 
-    private IClient renameClient(String oldName, String newName)
+    private void renameClient(IClient client, String newName)
     {
-        IRCClient c = getOrCreateClient(oldName);
-        clients.remove(oldName);
-        c.setNick(newName);
-        clients.put(newName, c);
-        return c;
+        clients.remove(client.getNick());
+        client.setNick(newName);
+        clients.put(newName, (IRCClient) client);
     }
 }
